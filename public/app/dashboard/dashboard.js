@@ -17,17 +17,19 @@
         vm.people = [];
         vm.title = 'Dashboard';
         vm.credentials = {};
-        vm.credentials.username = 'guest';
-        vm.credentials.password = 'guestpass';
+        vm.primersReadyForOrder = [];
+        vm.primersAwaitingReceipt = [];
+
+        vm.initPrimersForOrder = initPrimersForOrder;
+        vm.initPrimersForReceipt = initPrimersForReceipt;
+        vm.orderPrimers = orderPrimers;
 
         activate();
 
         function activate() {
             var promises = [];
             common.activateController(promises, controllerId)
-                .then(function () {
-                    log('Activated Dashboard View');
-                });
+                .then(function () {});
         }
 
 
@@ -65,6 +67,32 @@
             });
         }
 
+        //order primers
+        function orderPrimers() {
+            return datacontext.runAdhocQuery("MATCH (o:AwaitingOrder) set o : AwaitingReceipt remove o : AwaitingOrder").then(function (result) {
+                return vm.primersReadyForOrder = result.data;
+            });
+        }
+
+        ///check for primers ready to order at page load
+        function initPrimersForOrder() {
+            return datacontext.runAdhocQuery("MATCH (order:AwaitingOrder)<-[:HAS_ORDER]-(primer:Primer) return order, primer;").then(function (result) {
+                return vm.primersReadyForOrder = result.data;
+            });
+        }
+
+        ///check for primers ready to Receipt at page load
+        function initPrimersForReceipt() {
+            return datacontext.runAdhocQuery("MATCH (order:AwaitingReceipt)<-[:HAS_ORDER]-(primer:Primer) return order, primer;").then(function (result) {
+                return vm.primersAwaitingReceipt = result.data;
+            });
+        }
+
+        //populate on refresh
+        if ($window.sessionStorage.username != undefined){
+            vm.initPrimersForOrder();
+            vm.initPrimersForReceipt();
+        }
 
     }
 })();

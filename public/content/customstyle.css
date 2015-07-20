@@ -1,0 +1,4 @@
+/*No resizing of text boxes*/
+textarea {
+	resize:none;
+}

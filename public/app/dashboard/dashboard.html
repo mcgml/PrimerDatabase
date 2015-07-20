@@ -1,11 +1,11 @@
 <section id="dashboard-view" class="mainbar" data-ng-controller="dashboard as vm">
     <section class="matter">
         <div class="container">
+            
             <div class="row">
                 <div class="col-md-12">
                   <div class="widget wviolet">
-                      <div data-cc-widget-header title="Sign in to access the API"
-                             allow-collapse="true"></div>
+                      <div data-cc-widget-header title="Sign in to access the Primer Database and Design Tool"></div>
                       <div class="widget-content text-left text-info">
                     <form class="form-inline" role="form">
                         <div class="form-group form-group-sm">
@@ -20,35 +20,67 @@
                         </div>
                         <button  class="btn btn-default" ng-click='vm.signin()'>Sign in</button>
                     </form>
-                          This demo application illustrates the use of AngularJS with Node Js, Neo4J Graph DB and Express. The application also uses JSON Web Tokens and Passport JS to protect the API endpoints. Use 'guest'/'guestpassword' to login in order to access the API calls. Currently PassportJS's LocalStrategy is implemented. Stay tuned for implementation of other strategies supported by PassportJs
+                          This web application manages ordering and designing of PCR primers.
                       </div>
                 </div>
                 </div>
             </div>
+
             <div class="row">
+
+                <!-- Primers for order -->
                 <div class="col-md-6">
                     <div class="widget wblue">
-                        <div data-cc-widget-header title="Add and Remove Drugs"
-                             allow-collapse="true"></div>
-                        <div class="widget-content text-left text-info">
-                            Manage your list of drugs by navigating to the Manage Drugs section. You can add new drugs to the list by using the form.
-                            When a new drug is added, it will automatically be available in the drop downs for creating relationships
+                        <div data-cc-widget-header title="Primers awaiting order" allow-collapse="true"></div>
+                        <div class="widget-content">
+                            <table class="table table-bordered" ng-repeat="node in vm.primersReadyForOrder" ng-if="$index > 0">
+                                <thead>
+                                    <tr>
+                                        <th class="col-md-2" nowrap>#</th>
+                                        <th class="col-md-5" nowrap>Primer Name</th>
+                                        <th class="col-md-5" nowrap>Primer Sequence</th>
+                                    </tr>
+                                </thead>
+                                <tr ng-repeat="node2 in node">
+                                    <td class="col-md-2" nowrap>{{ $index + 1 }}</td>
+                                    <td class="col-md-5" nowrap>{{ node2.order.data.PrimerName }}</td>
+                                    <td class="col-md-5" nowrap>{{ node2.primer.data.PrimerSequence }}</td>
+                                </tr>
+                            </table>
+                            <p>
+                                <div class="form-group">
+                                    <button class="btn btn-info" data-ng-click="vm.orderPrimers()"><i class="glyphicon glyphicon-ok-circle"></i>Order</button>
+                                </div>
+                            </p>
                         </div>
-
                     </div>
                 </div>
+
+                <!-- Primers for receipt -->
                 <div class="col-md-6">
                     <div class="widget wgreen">
-                        <div data-cc-widget-header title="Manage Relationships"
-                             allow-collapse="true"></div>
-                        <div class="widget-content text-left text-info">
-                            Once you have the drugs created in the graph database, you can then specify the relationships between them by using the relationship form.
-                            Select two drugs and the relationship - Interacts with or Alternative to - between them to create the relationship.
+                        <div data-cc-widget-header title="Primers awaiting receipt" allow-collapse="true"></div>
+                        <div class="widget-content">
+                            <table class="table table-bordered" ng-repeat="node in vm.primersAwaitingReceipt" ng-if="$index > 0">
+                                <thead>
+                                    <tr>
+                                        <th class="col-md-2" nowrap>#</th>
+                                        <th class="col-md-5" nowrap>Primer Name</th>
+                                        <th class="col-md-5" nowrap>Primer Sequence</th>
+                                    </tr>
+                                </thead>
+                                <tr ng-repeat="node2 in node">
+                                    <td class="col-md-2" nowrap>{{ $index + 1 }}</td>
+                                    <td class="col-md-5" nowrap>{{ node2.order.data.PrimerName }}</td>
+                                    <td class="col-md-5" nowrap>{{ node2.primer.data.PrimerSequence }}</td>
+                                </tr>
+                            </table>
                         </div>
-
                     </div>
                 </div>
+
             </div>
+
         </div>
     </section>
 </section>

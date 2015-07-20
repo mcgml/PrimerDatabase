@@ -25,7 +25,7 @@
         activate();
 
         function activate() {
-            logSuccess('Angular App loaded!', null, true);
+            logSuccess('Welcome', null, true);
             common.activateController([], controllerId);
         }
 

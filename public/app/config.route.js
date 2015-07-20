@@ -37,7 +37,7 @@
                     templateUrl: 'app/admin/create.html',
                     settings: {
                         nav: 2,
-                        content: '<i class="fa fa-tasks"></i> Manage Drugs'
+                        content: '<i class="fa fa-tasks"></i> Manage Assays'
                     }
                 }
             },
@@ -48,7 +48,7 @@
                     templateUrl: 'app/admin/query.html',
                     settings: {
                         nav: 5,
-                        content: '<i class="fa fa-crosshairs"></i> Run Ad-hoc queries'
+                        content: '<i class="fa fa-crosshairs"></i> Search Assays'
                     }
                 }
             },

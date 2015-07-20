@@ -4,7 +4,7 @@
 
 var neo4j = require('neo4j-js');
 var async = require('async');
-var neo4JUrl = 'http://interactions:C0z0OZ70Oh7MriQHeNB5@interactions.sb02.stations.graphenedb.com:24789/db/data/';
+var neo4JUrl = 'http://localhost:7474/db/data/';
 var passport = require('passport');
 var jwt = require('jsonwebtoken');
 
