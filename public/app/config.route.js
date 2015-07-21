@@ -37,7 +37,7 @@
                     templateUrl: 'app/admin/create.html',
                     settings: {
                         nav: 2,
-                        content: '<i class="fa fa-tasks"></i> Add Primers'
+                        content: '<i class="fa fa-tasks"></i> Add'
                     }
                 }
             },
@@ -48,7 +48,7 @@
                     templateUrl: 'app/admin/query.html',
                     settings: {
                         nav: 5,
-                        content: '<i class="fa fa-crosshairs"></i> Search Primers'
+                        content: '<i class="fa fa-crosshairs"></i> Search'
                     }
                 }
             },

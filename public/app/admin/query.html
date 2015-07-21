@@ -62,7 +62,7 @@
                                         <td>{{ node2.assay.data.ReferenceGenome }}</td>
                                         <tr ng-if="vm.assayInfoExpanded[$index]" ng-repeat-end="">
                                             <td></td>
-                                            <td><a href="http://localhost:60151/goto?locus=egfr"><img src="../content/images/igv.png" border="0"></a></td>
+                                            <td><a href="http://localhost:60151/load?locus={{node2.assay.data.Contig}}:{{node2.assay.data.StartPos}}-{{node2.assay.data.EndPos}}&amp;genome=b37"><img src="../content/images/igv.png" border="0"></a></td>
                                             <td colspan="3" ng-if="node2.user.data.FullName != null">Checked By: {{ node2.user.data.FullName }}</td>
                                             <td ng-if="node2.user.data.FullName == null" colspan="3"><button ng-click="vm.addCheckedBy()">Check</td>
                                             <td colspan="2" ng-if="node2.checker.data.Date != null"><mydate>Date: {{node2.checker.data.Date | date:'dd-MM-yy'}}</mydate></td>
