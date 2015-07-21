@@ -61,7 +61,7 @@
 
         //add new auto primer
         function addAutoPrimer(){
-
+            
         }
 
         //add manual primer

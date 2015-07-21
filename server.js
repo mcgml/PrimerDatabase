@@ -16,6 +16,7 @@ var flash = require('connect-flash');
 var passport = require("passport");
 var LocalStrategy = require('passport-local').Strategy;
 var TwitterStrategy = require('passport-twitter').Strategy;
+var exec = require('child_process').exec;
 
 var users = [
     { id: 1, username: 'ml', password: 'lyon', email: 'test@test.co.uk', fullname: 'Matthew Lyon' }
