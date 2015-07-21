@@ -25,7 +25,6 @@
         activate();
 
         function activate() {
-            logSuccess('Welcome', null, true);
             common.activateController([], controllerId);
         }
 

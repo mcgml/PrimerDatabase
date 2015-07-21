@@ -2,49 +2,196 @@
     <section class="matter">
         <div class="container">
             <div class="row">
+
+                <!-- assay search section -->
                 <div class="widget wviolet">
-                    <div data-cc-widget-header title="{{vm.title}}"></div>
+                    <div data-cc-widget-header title="Search by Target Region" allow-collapse="true"></div>
                     <div class="widget-content">
                         <div class="row">
+                            
                             <div class="col-md-4">
                                 <form class="form-horizontal" role="form">
                                     <div class="form-group">
-                                         <label  class="control-label">Sample Queries:</label>
-                                         <select ng-model="vm.selectedQuery" class="form-control" ng-options="q.name for q in vm.sampleQueries"
-                                            ng-change="vm.query = vm.selectedQuery.query" ></select>
-                                     </div>
+                                        <input type="text" class="form-control" placeholder="Enter Target Region" data-ng-model="vm.targetRegion">
+                                    </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-info" data-ng-click="vm.runTargetRegionQuery()"><i class="glyphicon glyphicon-search"></i>Search</button>
+                                        <button class="btn btn-info" data-ng-click="vm.targetRegion = ''"><i class="glyphicon glyphicon-remove-sign"></i>Clear</button>
+                                    </div>
                                 </form>
-                                
-                            </div>
-                            <div class="col-md-4">
                             </div>
                         </div>
+
                         <div class="row">
-                            <div class="col-md-4">
-                                <h2>Query Features</h2>
-                                <p>
-                                    <label>Cypher Query</label>
-                                    <textarea data-ng-model="vm.query" rows="8" style="width:100%;"></textarea>
-                                </p>
-                                <p>
-                                    <button class="btn btn-success" data-ng-click="vm.runQuery()">Run Query</button>
-                                </p>
-                            </div>
-                            <div class="col-md-8">
-                                <h2>Query results</h2>
-                                <ul>
-                                    <li data-ng-repeat="node in vm.nodes | filter:json">{{node}}</li>
-                                </ul>
+                            <div class="col-md-12">
+
+                                <table class="table table-striped" ng-repeat="node in vm.regionofInterestNodes" ng-if="$index > 0">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-md-1">#</th>
+                                            <th class="col-md-1">Info</th>
+                                            <th class="col-md-1">Contig</th>
+                                            <th class="col-md-1">Start</th>
+                                            <th class="col-md-1">End</th>
+                                            <th class="col-md-1">Left Sequence</th>
+                                            <th class="col-md-1">Tm</th>
+                                            <th class="col-md-1">Right Sequence</th>
+                                            <th class="col-md-1">Tm</th>
+                                            <th class="col-md-1">Size</th>
+                                            <th class="col-md-1">Penality</th>
+                                            <th class="col-md-1">Genome</th>
+                                        </tr>
+                                    </thead>
+                                    <tr ng-repeat-start="node2 in node">
+                                        <td>{{ $index + 1 }}</td>
+                                        <td>
+                                            <button ng-if="vm.assayInfoExpanded[$index] == undefined || !vm.assayInfoExpanded[$index]" class="glyphicon glyphicon-plus" ng-click="vm.assayInfoExpanded[$index] = true">
+                                            </button>
+                                            <button ng-if="vm.assayInfoExpanded[$index]" class="glyphicon glyphicon-minus" ng-click="vm.assayInfoExpanded[$index] = false">
+                                            </button>
+                                        </td>
+                                        <td>{{ node2.assay.data.Contig }}</td>
+                                        <td>{{ node2.assay.data.StartPos }}</td>
+                                        <td>{{ node2.assay.data.EndPos }}</td>
+                                        <td>{{ node2.leftPrimer.data.PrimerSequence }}</td>
+                                        <td>{{ node2.leftPrimer.data.Tm }}</td>
+                                        <td>{{ node2.rightPrimer.data.PrimerSequence }}</td>
+                                        <td>{{ node2.rightPrimer.data.Tm }}</td>
+                                        <td>{{ node2.assay.data.EndPos - node2.assay.data.StartPos }}</td>
+                                        <td>{{ node2.assay.data.DesignPenality }}</td>
+                                        <td>{{ node2.assay.data.ReferenceGenome }}</td>
+                                        <tr ng-if="vm.assayInfoExpanded[$index]" ng-repeat-end="">
+                                            <td></td>
+                                            <td><a href="http://localhost:60151/goto?locus=egfr"><img src="../content/images/igv.png" border="0"></a></td>
+                                            <td colspan="3" ng-if="node2.user.data.FullName != null">Checked By: {{ node2.user.data.FullName }}</td>
+                                            <td ng-if="node2.user.data.FullName == null" colspan="3"><button ng-click="vm.addCheckedBy()">Check</td>
+                                            <td colspan="2" ng-if="node2.checker.data.Date != null"><mydate>Date: {{node2.checker.data.Date | date:'dd-MM-yy'}}</mydate></td>
+                                            <td colspan="5"></td>
+                                        </tr>
+                                    </tr>
+                                </table>
+
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Primer Sequence search section -->
+                <div class="widget wblue">
+                    <div data-cc-widget-header title="Primer Sequence" allow-collapse="true"></div>
+                    <div class="widget-content">
+                        <div class="row">
+                            
+                            <div class="col-md-4">
+                                <form class="form-horizontal" role="form">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Enter Primer Sequence" data-ng-model="vm.primerSequence">
+                                    </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-info" data-ng-click="vm.runPrimerSequenceQuery()"><i class="glyphicon glyphicon-search"></i>Search</button>
+                                        <button class="btn btn-info" data-ng-click="vm.primerSequence = ''"><i class="glyphicon glyphicon-remove-sign"></i>Clear</button>
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-5">
+
+                                <table class="table table-striped" ng-repeat="node in vm.primerSequenceNodes" ng-if="$index > 0">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-md-1">#</th>
+                                            <th class="col-md-1">Info</th>
+                                            <th class="col-md-1">Sequence</th>
+                                            <th class="col-md-1">Tm</th>
+                                        </tr>
+                                    </thead>
+                                    <tr ng-repeat-start="node2 in node">
+                                        <td class="col-md-1">{{ $index + 1 }}</td>
+                                        <td class="col-md-1">
+                                            <button ng-if="vm.primerSequenceInfoExpanded[$index] == undefined || !vm.primerSequenceInfoExpanded[$index]" class="glyphicon glyphicon-plus" ng-click="vm.primerSequenceInfoExpanded[$index] = true">
+                                            </button>
+                                            <button ng-if="vm.primerSequenceInfoExpanded[$index]" class="glyphicon glyphicon-minus" ng-click="vm.primerSequenceInfoExpanded[$index] = false">
+                                            </button>
+                                        </td>
+                                        <td class="col-md-1">{{ node2.primer.data.PrimerSequence }}</td>
+                                        <td class="col-md-1">{{ node2.primer.data.Tm }}</td>
+                                        <tr ng-if="vm.primerSequenceInfoExpanded[$index]" ng-repeat-end="">
+                                            <td></td>
+                                            <td colspan="3">
+                                                Name: {{ node2.order.data.PrimerName }},
+                                                Purification: {{ node2.order.data.Purification }},
+                                                Supplier: {{ node2.order.data.Supplier }},
+                                                Scale: {{ node2.order.data.Scale }},
+                                                LotNumber: {{ node2.order.data.LotNumber }},
+                                                StorageLocation: {{ node2.storageLocation.data.Location }},
+                                                Ordered By: {{ node2.orderedBy.data.FullName }},
+                                                Received By: {{ node2.receivedBy.data.FullName }}
+                                            </td>
+                                        </tr>
+                                    </tr>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Primer Name search section -->
+                <div class="widget wgreen">
+                    <div data-cc-widget-header title="Primer Name" allow-collapse="true"></div>
+                    <div class="widget-content">
+                        <div class="row">
+                            
+                            <div class="col-md-4">
+                                <form class="form-horizontal" role="form">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Enter Primer Name" data-ng-model="vm.primerName">
+                                    </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-info" data-ng-click="vm.runPrimerNameQuery()"><i class="glyphicon glyphicon-search"></i>Search</button>
+                                        <button class="btn btn-info" data-ng-click="vm.primerName = ''"><i class="glyphicon glyphicon-remove-sign"></i>Clear</button>
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-5">
+                                <table class="table table-striped" ng-repeat="node in vm.primerNameNodes" ng-if="$index > 0">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-md-1">#</th>
+                                            <th class="col-md-1">Info</th>
+                                            <th class="col-md-1">Name</th>
+                                            <th class="col-md-1">Sequence</th>
+                                            <th class="col-md-1">Tm</th>
+                                        </tr>
+                                    </thead>
+                                    <tr ng-repeat="node2 in node">
+                                        <td>{{ $index + 1 }}</td>
+                                        <td><button class="btn btn-primary btn-xs" data-title="Edit" data-toggle="modal" data-target="#edit" ><span class="glyphicon glyphicon-info-sign"></span></button></td>
+                                        <td>{{ node2.order.data.PrimerName }}</td>
+                                        <td>{{ node2.primer.data.PrimerSequence }}</td>
+                                        <td>{{ node2.primer.data.Tm }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            
+                        </div>
+
+                    </div>
+                </div>
+
                 <div class="widget-foot">
                     <div class="clearfix"></div>
                 </div>
+
             </div>
         </div>
-
     </section>
 </section>
-

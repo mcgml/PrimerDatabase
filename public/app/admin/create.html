@@ -2,118 +2,72 @@
     <section class="matter">
         <div class="container">
             <div class="row">
-                <div class="widget wblue">
-                    <div data-cc-widget-header title="Manage Drugs"
-                         allow-collapse="true"></div>
+
+                <!-- Automated design new primer pair -->
+                <div class="widget wviolet">
+                    <div data-cc-widget-header title="Design and Add Primer Pair" allow-collapse="true"></div>
                     <div class="widget-content">
                         <div class="row">
                             <div class="col-md-6">
-                                <h4>Add a Drug</h4>
+
                                  <form class="form-horizontal" role="form">
                                      <div class="form-group">
-                                         <label  class="control-label">Name:</label>
-                                         <input type="text" class="form-control" placeholder="Enter Drug Name"   data-ng-model="vm.newDrugName">
+                                        <textarea data-ng-model="vm.newAutoRegionOfInterest" rows="5" style="width:100%;" placeholder="Enter Regions of Interest (Required)">
+                                        </textarea>
                                      </div>
-                                     <div class="form-group">
-                                          <label  class="control-label">Description:</label>
-                                         <textarea class="form-control" rows="3" placeholder="Drug Description" ng-model="vm.newDrugDescription"></textarea>
-                                         
-                                     </div>
-                                      <div class="form-group">
-                                          <button class="btn btn-info" data-ng-click="vm.addDrug()"><i class="fa fa-pencil-square"></i>Add</button>
-                                      </div>
+                                       <div class="form-group">
+                                        <button class="btn btn-info" data-ng-click="vm.addAutoPrimer()"><i class="glyphicon glyphicon-pencil"></i>Add</button>
+                                        <button class="btn btn-info" data-ng-click="vm.newAutoAssayName = ''; vm.newAutoRegionOfInterest = '';"><i class="glyphicon glyphicon-remove-sign"></i>Clear</button>
+                                    </div>
                                  </form>
                                
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add new manual primer -->
+                <div class="widget wblue">
+                    <div data-cc-widget-header title="Add Custom Primers" allow-collapse="true"></div>
+                    <div class="widget-content">
+                        <div class="row">
+                            <div class="col-md-6">
+
+                                 <form class="form-horizontal" role="form">
+                                     <div class="form-group">
+                                         <input type="text" class="form-control" placeholder="Enter Upstream Primer Sequence (Required)" data-ng-model="vm.newManualUpstreamPrimerSequence">
+                                     </div>
+                                     <div class="form-group">
+                                         <input type="text" class="form-control" placeholder="Enter Target Region" data-ng-model="vm.newManualTargetRegion">
+                                     </div>
+                                       <div class="form-group">
+                                        <button class="btn btn-info" data-ng-click="vm.addManualPrimer()"><i class="glyphicon glyphicon-pencil"></i>Add</button>
+                                        <button class="btn btn-info" data-ng-click="vm.newManualAssayName = ''; vm.newManualTargetRegion = ''; vm.newManualUpstreamPrimerSequence = ''; vm.newManualDownstreamPrimerSequence = '';"><i class="glyphicon glyphicon-remove-sign"></i>Clear</button>
+                                    </div>
+                                 </form>
+                                 
+                            </div>
 
                             <div class="col-md-6">
-                                <h4>Delete a Drug</h4>
+
                                 <form class="form-horizontal" role="form">
                                      <div class="form-group">
-                                         <label  class="control-label">Drugs:</label>
-                                         <select ng-model="vm.selectedDrugForDelete" class="form-control" ng-options="drug.n.data.name for drug in vm.drugs"></select>
+                                         <input type="text" class="form-control" placeholder="Enter Downstream Primer Sequence" data-ng-model="vm.newManualDownstreamPrimerSequence">
                                      </div>
-                                    
-                                      <div class="form-group">
-                                          <button class="btn btn-info" data-ng-click="vm.deleteDrug()"><i class="fa fa-pencil-square"></i>Delete</button>
-                                      </div>
                                  </form>
-                               
-<!--                               {{vm.drugs}} -- {{vm.selectedDrugForDelete}}-->
+
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <div class="widget-foot">
                     <div class="clearfix"></div>
                 </div>
+
             </div>
         </div>
 
     </section>
-
-    <!-- Relationship section -->
-
-    <section class="matter">
-        <div class="container">
-            <div class="row">
-                <div class="widget wgreen">
-                    <div data-cc-widget-header title="Manage Relationships"
-                         allow-collapse="true"></div>
-                    <div class="widget-content">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h4>Add a Relationship</h4>
-                                 <form class="form-horizontal" role="form">
-                                     <div class="form-group">
-                                         <label  class="control-label">From:</label>
-                                         <select ng-model="vm.relationshipFrom" class="form-control" ng-options="drug.n.data.name for drug in vm.drugs"></select>
-                                     </div>
-                                    
-                                     <div class="form-group">
-                                         <label  class="control-label">Type:</label>
-                                         <select ng-model="vm.relation" class="form-control" ng-options="type for type in vm.relationshipTypes"></select>
-                                     </div>
-
-                                      <div class="form-group">
-                                         <label  class="control-label">To:</label>
-                                         <select ng-model="vm.relationshipTo" class="form-control" ng-options="drug.n.data.name for drug in vm.drugs"></select>
-                                     </div>
-                                     <div class="form-group">
-                                          <label  class="control-label">Description:</label>
-                                         <textarea class="form-control" rows="3" placeholder="Relationship Description" ng-model="vm.relationshipDescription"></textarea>
-                                         
-                                     </div>
-                                    
-                                      <div class="form-group">
-                                          <button class="btn btn-info" data-ng-click="vm.addRelationship()"><i class="fa fa-pencil-square"></i>Add Relationship</button>
-                                      </div>
-                                 </form>
-                               
-                            </div>
-
-                            <div class="col-md-6">
-                                <h4>Delete a Relationship</h4>
-                               <form class="form-horizontal" role="form">
-                                     <div class="form-group">
-                                         <label  class="control-label">Relationship:</label>
-                                         <select ng-model="vm.selectedRelationshipToDelete" class="form-control" ng-options="relation.n.data.name +'-' + relation.r.type + '->' + relation.m.data.name for relation in vm.relationships"></select>
-                                     </div>
-                                    
-                                      <div class="form-group">
-                                          <button class="btn btn-info" data-ng-click="vm.deleteRelationship()"><i class="fa fa-pencil-square"></i>Delete Relationship</button>
-                                      </div>
-                                 </form>
-                               
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="widget-foot">
-                    <div class="clearfix"></div>
-                </div>
-            </div>
-        </div>
-
-    </section>
+    
 </section>
