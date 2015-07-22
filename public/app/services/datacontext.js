@@ -24,7 +24,8 @@
             updateNode: updateNode,
             deleteNode: deleteNode,
             createNode: createNode,
-            addNode: addNode
+            addNode: addNode,
+            runPrimerDesigner: runPrimerDesigner
         };
 
         return service;
@@ -255,6 +256,18 @@
             ].join('\n');
 
             return runAdhocQuery(query);
+        }
+
+        function runPrimerDesigner(query) {
+
+            var call = $http({
+                method: 'POST',
+                data: { query: query },
+                url: '/api/runPrimerDesigner',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            return $q.when(call);
         }
 
     }

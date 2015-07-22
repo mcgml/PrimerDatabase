@@ -7,6 +7,9 @@ var async = require('async');
 var neo4JUrl = 'http://localhost:7474/db/data/';
 var passport = require('passport');
 var jwt = require('jsonwebtoken');
+var proc = require('child_process');
+var fs = require('fs');
+var readline = require('readline');
 
 exports.signin = function(req, res, next) {
 	passport.authenticate('local', function(err, user, info) {
@@ -319,3 +322,50 @@ exports.getAllNodes = function(req, res) {
     });
 
 };
+
+
+exports.runPrimerDesigner = function (req, res) {
+    
+    var d = new Date();
+    var n = d.getTime();
+    var command = 'java -jar /Users/ml/IdeaProjects/PrimerDesigner/out/artifacts/PrimerDesigner_jar/PrimerDesigner.jar ' + n + '.bed';
+
+    //write input to BED for auomated analysis
+    fs.writeFile(n + ".bed", req.body.query, function(err) {
+
+        if(err) {
+            return console.log(err);
+        }
+
+    });
+
+    //execute design
+    proc.exec(command, function callback(error, stdout, stderr){
+
+        if (error){
+            throw error;
+        }
+
+        res.json({
+            stdout: stdout,
+            stderr: stderr,
+            error: error
+        });
+
+    });
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+

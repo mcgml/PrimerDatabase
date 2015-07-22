@@ -19,10 +19,11 @@
 
         //store cypher return in JSON
         vm.neo4jReturn = [];
+        vm.primerDesignerReturn = [];
 
         // Our event handlers
         vm.checkCypherLog = checkCypherLog;
-        vm.addAutoPrimer = addAutoPrimer;
+        vm.runPrimerDesigner = runPrimerDesigner;
         vm.addManualPrimer = addManualPrimer;
         
         // Call this function when our controller is loaded
@@ -59,9 +60,55 @@
 
         }
 
-        //add new auto primer
-        function addAutoPrimer(){
-            
+        //add new deigner primer
+        function runPrimerDesigner(){
+
+            //check and extract target region
+            if (vm.newAutoRegionOfInterest == undefined || vm.newAutoRegionOfInterest == ""){
+                logError('Enter a target region');
+                return;
+            }
+
+            var fields = vm.newAutoRegionOfInterest.split(/:|-/);
+            var prefix = vm.newAutoRegionOfInterest.substring(0, 3);
+
+            if (fields.length != 3){
+                logError('Target location format is chr:start-end');
+                return;
+            }
+
+            if (prefix == "chr"){
+                logError('Do not use the chr prefix');
+                return;
+            }
+
+            if (parseInt(fields[1]) > parseInt(fields[2])){
+                logError('Coordinates should be ascending');
+                return;
+            }
+
+            vm.newAutoRegionOfInterest = "Running..."; //todo activate spinner
+
+            return datacontext.runPrimerDesigner(fields[0] + "\t" + fields[1] + "\t" + fields[2]).then(function (result) {
+                
+                vm.newAutoRegionOfInterest = "Done!"; //todo deactivate spinner
+                vm.primerDesignerReturn = jQuery.parseJSON(result.data.stdout);
+
+                var query = "MATCH (user:User {FullName:\"" + "Matthew Lyon" + "\"}) ";
+                query += "CREATE (primer1:Primer {PrimerSequence:\"" + vm.primerDesignerReturn.leftSequence + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user), ";
+                query += "(primer2:Primer {PrimerSequence:\"" + vm.primerDesignerReturn.rightSequence + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user), ";
+                query += "(primer1)-[:HAS_TARGET]->(assay:Assay {Contig:\"" + vm.primerDesignerReturn.chromosome + "\", StartPos:toInt(" + vm.primerDesignerReturn.startPosition + "), EndPos:toInt(" + vm.primerDesignerReturn.endPosition + "), ReferenceGenome:\"GRCh37.75\"})<-[:HAS_TARGET]-(primer2), ";
+                query += "(assay)<-[:DESIGNED_BY {Date:" + today.getTime() + "}]-(user);"
+
+                //add upstream primer and order
+                return datacontext.runAdhocQuery(query).then(function (result) {
+                    vm.neo4jReturn = result.data;
+                    checkCypherLog();
+                    return;
+                });
+
+            });
+
         }
 
         //add manual primer
@@ -150,8 +197,8 @@
                 var query = "MATCH (user:User {FullName:\"" + "Matthew Lyon" + "\"}) ";
                     query += "CREATE (primer1:Primer {PrimerSequence:\"" + vm.newManualUpstreamPrimerSequence + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user), ";
                     query += "(primer2:Primer {PrimerSequence:\"" + vm.newManualDownstreamPrimerSequence + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user), ";
-                    query += "(primer1)-[:HAS_TARGET]->(assay:Assay {Contig:toString(" + fields[0] + "), StartPos:toInt(" + fields[1] + "), EndPos:toInt(" + fields[2] + ")})<-[:HAS_TARGET]-(primer2), ";
-                    query += "(assay {ReferenceGenome:\"GRCh37.75\"})<-[:DESIGNED_BY {Date:" + today.getTime() + "}]-(user);"
+                    query += "(primer1)-[:HAS_TARGET]->(assay:Assay {Contig:\"" + fields[0] + "\", StartPos:toInt(" + fields[1] + "), EndPos:toInt(" + fields[2] + "), ReferenceGenome:\"GRCh37.75\"})<-[:HAS_TARGET]-(primer2), ";
+                    query += "(assay)<-[:DESIGNED_BY {Date:" + today.getTime() + "}]-(user);"
 
                     //add upstream primer and order
                     return datacontext.runAdhocQuery(query).then(function (result) {

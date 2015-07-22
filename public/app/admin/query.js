@@ -122,7 +122,7 @@
                 return;
             }
 
-            var query = "MATCH (leftPrimer:Primer)-[:HAS_TARGET]->(assay:Assay)<-[:HAS_TARGET]-(rightPrimer:Primer) where assay.Contig = toString(" + fields[0] + ") AND assay.StartPos <= toInt(" + fields[1] + ") AND assay.EndPos >= toInt(" + fields[0] + ") ";
+            var query = "MATCH (leftPrimer:Primer)-[:HAS_TARGET]->(assay:Assay)<-[:HAS_TARGET]-(rightPrimer:Primer) where assay.Contig = \"" + fields[0] + "\" AND assay.StartPos <= toInt(" + fields[1] + ") AND assay.EndPos >= toInt(" + fields[2] + ") ";
                 query += "MATCH (assay)-[checker:CHECKED_BY]->(user:User) return leftPrimer, assay, rightPrimer, checker, user;";
             return datacontext.runAdhocQuery(query).then(function (result) {
                 vm.neo4jReturn = result.data;
