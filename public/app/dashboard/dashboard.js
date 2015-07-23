@@ -60,8 +60,14 @@
                 var profile = JSON.parse(url_base64_decode(encodedProfile));
                 $window.sessionStorage.username = profile.username;
                 common.$rootScope.$broadcast('loginSuccess', {});
+                log('Welcome ' + $window.sessionStorage.username + ' you are now logged in.');
                 // And redirect to the index page
                 $location.path('/');
+
+                //load primers
+                vm.initPrimersForOrder();
+                vm.initPrimersForReceipt();
+                
             }).error(function (response) {
                 vm.message.user = response.message;
             });
@@ -69,9 +75,14 @@
 
         //order primers
         function orderPrimers() {
-            return datacontext.runAdhocQuery("MATCH (o:AwaitingOrder) set o : AwaitingReceipt remove o : AwaitingOrder").then(function (result) {
+            return datacontext.runAdhocQuery("MATCH (order:AwaitingOrder)<-[:HAS_ORDER]-(primer:Primer) return order, primer;").then(function (result) {
                 return vm.primersReadyForOrder = result.data;
             });
+        }
+
+        function removeFroOrder(){
+            vm.initPrimersForOrder();
+            vm.initPrimersForReceipt();
         }
 
         ///check for primers ready to order at page load

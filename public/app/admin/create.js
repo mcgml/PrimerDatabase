@@ -77,7 +77,7 @@
                 return;
             }
 
-            if (prefix == "chr"){
+            if (prefix.toUpperCase() == "CHR"){
                 logError('Do not use the chr prefix');
                 return;
             }
@@ -94,11 +94,9 @@
                 vm.newAutoRegionOfInterest = "Done!"; //todo deactivate spinner
                 vm.primerDesignerReturn = jQuery.parseJSON(result.data.stdout);
 
-                var query = "MATCH (user:User {FullName:\"" + "Matthew Lyon" + "\"}) ";
-                query += "CREATE (primer1:Primer {PrimerSequence:\"" + vm.primerDesignerReturn.leftSequence + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user), ";
-                query += "(primer2:Primer {PrimerSequence:\"" + vm.primerDesignerReturn.rightSequence + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user), ";
-                query += "(primer1)-[:HAS_TARGET]->(assay:Assay {Contig:\"" + vm.primerDesignerReturn.chromosome + "\", StartPos:toInt(" + vm.primerDesignerReturn.startPosition + "), EndPos:toInt(" + vm.primerDesignerReturn.endPosition + "), ReferenceGenome:\"GRCh37.75\"})<-[:HAS_TARGET]-(primer2), ";
-                query += "(assay)<-[:DESIGNED_BY {Date:" + today.getTime() + "}]-(user);"
+                var query += "CREATE (uprimer:UpstreamPrimer {PrimerSequence:\"" + vm.primerDesignerReturn.leftSequence + "\", Tm: toFloat(" + vm.primerDesignerReturn.leftTm ")}), ";
+                query += "(dprimer:DownstreamPrimer {PrimerSequence:\"" + vm.primerDesignerReturn.rightSequence + "\"}), Tm: toFloat(" + vm.primerDesignerReturn.rightTm ")}), ";
+                query += "(uprimer)-[:HAS_TARGET]->(assay:Assay {Contig:\"" + vm.primerDesignerReturn.chromosome + "\", StartPos:toInt(" + vm.primerDesignerReturn.startPosition + "), EndPos:toInt(" + vm.primerDesignerReturn.endPosition + "), ReferenceGenome:\"GRCh37.75\"})<-[:HAS_TARGET]-(dprimer);";
 
                 //add upstream primer and order
                 return datacontext.runAdhocQuery(query).then(function (result) {
@@ -114,37 +112,42 @@
         //add manual primer
         function addManualPrimer() {
 
-            //check upstream primer entry
-            if (vm.newManualUpstreamPrimerSequence == undefined || vm.newManualUpstreamPrimerSequence == ""){
-                logError('Enter an upstream primer sequence');
-                return;
-            }
-            //check upstream primer for non-IUPAC
-            for (var i = 0, len = vm.newManualUpstreamPrimerSequence.length; i < len; i++) {
+            var query;
+            boolean upstreamProvided = false, downstreamProvided = false;
 
-                if (vm.newManualUpstreamPrimerSequence[i] != 'A' &&
-                    vm.newManualUpstreamPrimerSequence[i] != 'T' &&
-                    vm.newManualUpstreamPrimerSequence[i] != 'G' &&
-                    vm.newManualUpstreamPrimerSequence[i] != 'C' &&
-                    vm.newManualUpstreamPrimerSequence[i] != 'U' &&
-                    vm.newManualUpstreamPrimerSequence[i] != 'R' &&
-                    vm.newManualUpstreamPrimerSequence[i] != 'Y' &&
-                    vm.newManualUpstreamPrimerSequence[i] != 'S' &&
-                    vm.newManualUpstreamPrimerSequence[i] != 'W' &&
-                    vm.newManualUpstreamPrimerSequence[i] != 'K' &&
-                    vm.newManualUpstreamPrimerSequence[i] != 'M' &&
-                    vm.newManualUpstreamPrimerSequence[i] != 'B' &&
-                    vm.newManualUpstreamPrimerSequence[i] != 'D' &&
-                    vm.newManualUpstreamPrimerSequence[i] != 'H' &&
-                    vm.newManualUpstreamPrimerSequence[i] != 'V' &&
-                    vm.newManualUpstreamPrimerSequence[i] != 'N' ){
-                        logError('Upstream primer sequence contains non-IUPAC bases');
-                        return; 
+            //check upstream primer entry
+            if (vm.newManualUpstreamPrimerSequence != undefined && vm.newManualUpstreamPrimerSequence != ""){
+                upstreamProvided = true;
+
+                //check upstream primer for non-IUPAC
+                for (var i = 0, len = vm.newManualUpstreamPrimerSequence.length; i < len; i++) {
+
+                    if (vm.newManualUpstreamPrimerSequence[i] != 'A' &&
+                        vm.newManualUpstreamPrimerSequence[i] != 'T' &&
+                        vm.newManualUpstreamPrimerSequence[i] != 'G' &&
+                        vm.newManualUpstreamPrimerSequence[i] != 'C' &&
+                        vm.newManualUpstreamPrimerSequence[i] != 'U' &&
+                        vm.newManualUpstreamPrimerSequence[i] != 'R' &&
+                        vm.newManualUpstreamPrimerSequence[i] != 'Y' &&
+                        vm.newManualUpstreamPrimerSequence[i] != 'S' &&
+                        vm.newManualUpstreamPrimerSequence[i] != 'W' &&
+                        vm.newManualUpstreamPrimerSequence[i] != 'K' &&
+                        vm.newManualUpstreamPrimerSequence[i] != 'M' &&
+                        vm.newManualUpstreamPrimerSequence[i] != 'B' &&
+                        vm.newManualUpstreamPrimerSequence[i] != 'D' &&
+                        vm.newManualUpstreamPrimerSequence[i] != 'H' &&
+                        vm.newManualUpstreamPrimerSequence[i] != 'V' &&
+                        vm.newManualUpstreamPrimerSequence[i] != 'N' ){
+                            logError('Upstream primer sequence contains non-IUPAC bases');
+                            return; 
+                    }
+
                 }
 
             }
             //see if downstream primer was provided
             if (vm.newManualDownstreamPrimerSequence != undefined && vm.newManualDownstreamPrimerSequence != ""){
+                downstreamProvided = true;
 
                 //check primer for non-IUPAC
                 for (var i = 0, len = vm.newManualDownstreamPrimerSequence.length; i < len; i++) {
@@ -167,59 +170,57 @@
                         vm.newManualDownstreamPrimerSequence[i] != 'N' ){
                             logError('Downstream primer sequence contains non-IUPAC bases');
                             return; 
-                        }
                     }
+                }
+            }
 
-                    //check and extract target region
-                    if (vm.newManualTargetRegion == undefined || vm.newManualTargetRegion == ""){
-                        logError('Enter a target region');
-                        return;
-                    }
+            if (upstreamProvided && downstreamProvided){
 
-                    var fields = vm.newManualTargetRegion.split(/:|-/);
-                    var prefix = vm.newManualTargetRegion.substring(0, 3);
+                //check and extract target region
+                if (vm.newManualTargetRegion == undefined || vm.newManualTargetRegion == ""){
+                    logError('Enter a target region');
+                    return;
+                }
+                var fields = vm.newManualTargetRegion.split(/:|-/);
+                var prefix = vm.newManualTargetRegion.substring(0, 3);
 
-                    if (fields.length != 3){
-                        logError('Target location format is chr:start-end');
-                        return;
-                    }
+                if (fields.length != 3){
+                    logError('Target location format is chr:start-end');
+                    return;
+                }
 
-                    if (prefix == "chr"){
-                        logError('Do not use the chr prefix');
-                        return;
-                    }
+                if (prefix.toUpperCase() == "CHR"){
+                    logError('Do not use the chr prefix');
+                    return;
+                }
 
-                    if (parseInt(fields[1]) > parseInt(fields[2])){
-                        logError('Coordinates should be ascending');
-                        return;
-                    }
+                if (parseInt(fields[1]) > parseInt(fields[2])){
+                    logError('Coordinates should be ascending');
+                    return;
+                }
 
-                var query = "MATCH (user:User {FullName:\"" + "Matthew Lyon" + "\"}) ";
-                    query += "CREATE (primer1:Primer {PrimerSequence:\"" + vm.newManualUpstreamPrimerSequence + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user), ";
-                    query += "(primer2:Primer {PrimerSequence:\"" + vm.newManualDownstreamPrimerSequence + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user), ";
-                    query += "(primer1)-[:HAS_TARGET]->(assay:Assay {Contig:\"" + fields[0] + "\", StartPos:toInt(" + fields[1] + "), EndPos:toInt(" + fields[2] + "), ReferenceGenome:\"GRCh37.75\"})<-[:HAS_TARGET]-(primer2), ";
+                    //todo add Tms
+                    query = "MATCH (user:User {FullName:\"" + "Matthew Lyon" + "\"}) "; //todo get real username
+                    query += "CREATE (uprimer:UpstreamPrimer {PrimerSequence:\"" + vm.newManualUpstreamPrimerSequence + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user), ";
+                    query += "(dprimer:DownstreamPrimer {PrimerSequence:\"" + vm.newManualDownstreamPrimerSequence + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user), ";
+                    query += "(uprimer)-[:HAS_TARGET]->(assay:Assay {Contig:\"" + fields[0] + "\", StartPos:toInt(" + fields[1] + "), EndPos:toInt(" + fields[2] + "), ReferenceGenome:\"GRCh37.75\"})<-[:HAS_TARGET]-(dprimer), ";
                     query += "(assay)<-[:DESIGNED_BY {Date:" + today.getTime() + "}]-(user);"
 
-                    //add upstream primer and order
-                    return datacontext.runAdhocQuery(query).then(function (result) {
-                        vm.neo4jReturn = result.data;
-                        checkCypherLog();
-                        return;
-                    });
+            } else if (upstreamProvided) {
 
-            } else {
+                    query = "MATCH (user:User {FullName:\"" + "Matthew Lyon" + "\"}) ";
+                    query += "CREATE (uprimer:UpstreamPrimer {PrimerSequence:\"" + vm.newManualUpstreamPrimerSequence + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user);";
 
-                var query = "MATCH (user:User {FullName:\"" + "Matthew Lyon" + "\"}) ";
-                    query += "CREATE (primer1:Primer {PrimerSequence:\"" + vm.newManualUpstreamPrimerSequence + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user);";
-
-                //add upstream primer and order
-                return datacontext.runAdhocQuery(query).then(function (result) {
-                    vm.neo4jReturn = result.data;
-                    checkCypherLog();
-                    return;
-                });
-
+            } else if (downstreamProvided){
+                    query = "MATCH (user:User {FullName:\"" + "Matthew Lyon" + "\"}) ";
+                    query += "CREATE (dprimer:DownstreamPrimer {PrimerSequence:\"" + vm.newManualDownstreamstreamPrimerSequence + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user);";
             }
+
+            return datacontext.runAdhocQuery(query).then(function (result) {
+                vm.neo4jReturn = result.data;
+                checkCypherLog();
+                return;
+            });
 
         }
 
