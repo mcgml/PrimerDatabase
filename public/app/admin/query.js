@@ -74,8 +74,20 @@
         }
 
         function launchIGV(){
-            window.open("http://localhost:60151/load?file=" +  + "&locus=" + bedFeatureForIGV.assay.data.Contig + ":" + bedFeatureForIGV.assay.data.StartPos + "-" + bedFeatureForIGV.assay.data.EndPos + "&genome=b37");
 
+            var feature = vm.bedFeatureForIGV.Contig + "\t" + vm.bedFeatureForIGV.StartPos + "\t" + vm.bedFeatureForIGV.EndPos + "\n";
+            var filePath = "/Users/ml/GitHub/PrimerDatabase/1437660944558_1.bed";
+
+            //write BED file to supplied filePath
+            datacontext.runWriteFeatureToBed(filePath, feature).then(function (result) { });
+                var newWindow = window.open("http://localhost:60151/load?file=" + filePath + "&locus=" + vm.bedFeatureForIGV.Contig + ":" + vm.bedFeatureForIGV.StartPos + "-" + vm.bedFeatureForIGV.EndPos + "&genome=b37");
+                    setTimeout(
+                        function()
+                        {
+                            newWindow.close();
+                        },
+                        3000
+                    );
         }
         
         function runPrimerNameQuery() {

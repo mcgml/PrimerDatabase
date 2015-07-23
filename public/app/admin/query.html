@@ -30,6 +30,7 @@
                                         <tr>
                                             <th class="col-md-1">#</th>
                                             <th class="col-md-1">Info</th>
+                                            <th class="col-md-1">View</th>
                                             <th class="col-md-1">Contig</th>
                                             <th class="col-md-1">Start</th>
                                             <th class="col-md-1">End</th>
@@ -49,6 +50,7 @@
                                             <button ng-if="vm.assayInfoExpanded[$index]" class="glyphicon glyphicon-minus" ng-click="vm.assayInfoExpanded[$index] = false">
                                             </button>
                                         </td>
+                                        <td><button ng-click="vm.bedFeatureForIGV.Contig = node2.assay.data.Contig; vm.bedFeatureForIGV.StartPos = node2.assay.data.StartPos; vm.bedFeatureForIGV.EndPos = node2.assay.data.EndPos; vm.launchIGV()"><img src="../content/images/igv.png" border="0" style="width:32px;height:32px"></button></td>
                                         <td>{{ node2.assay.data.Contig }}</td>
                                         <td>{{ node2.assay.data.StartPos }}</td>
                                         <td>{{ node2.assay.data.EndPos }}</td>
@@ -60,8 +62,7 @@
                                         <td>{{ node2.assay.data.ReferenceGenome }}</td>
                                         <tr ng-if="vm.assayInfoExpanded[$index]" ng-repeat-end="">
                                             <td></td>
-                                            <td><button ng-click="vm.bedFeatureForIGV = node2; vm.launchIGV()"><img src="../content/images/igv.png" border="0"></button></td>
-                                            <td ng-if="node2.user.data.UserName != null">Accepted By: {{ node2.user.data.UserName }}<mydate> {{node2.checker.data.Date | date:'dd-MM-yy'}}</mydate></td>
+                                            <td ng-if="node2.user.data.UserName != null">Accepted by: {{ node2.user.data.UserName }}<mydate> {{node2.checker.data.Date | date:'dd-MM-yy'}}</mydate></td>
                                             <td ng-if="node2.user.data.UserName == null"><button ng-click="vm.checkedAssayNodeId = node2.assay.id; vm.addCheckedBy()"></button>Accept Assay</td>
                                             <td ng-if="node2.upstreamPrimer.data.Comments != null">Upstream Primer Comments: {{node2.upstreamPrimer.data.Comments}}</td>
                                             <td ng-if="node2.downstreamPrimer.data.Comments != null">Downstream Primer Primer Comments: {{node2.downstreamPrimer.data.Comments}}</td>

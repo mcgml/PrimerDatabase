@@ -126,6 +126,7 @@ app.post('/api/getNode', api.getNode);
 app.get('/api/getAllNodes', api.getAllNodes);
 app.post('/signin', api.signin);
 app.post('/api/runPrimerDesigner', api.runPrimerDesigner);
+app.post('/api/runWriteFeatureToBed', api.runWriteFeatureToBed);
 
 // Simple route middleware to ensure user is authenticated.
 // Use this route middleware on any resource that needs to be protected. If
