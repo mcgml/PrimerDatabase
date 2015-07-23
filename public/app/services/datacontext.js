@@ -26,7 +26,6 @@
             createNode: createNode,
             addNode: addNode,
             runPrimerDesigner: runPrimerDesigner,
-            runWriteFeatureToBed : runWriteFeatureToBed
         };
 
         return service;
@@ -265,17 +264,6 @@
                 method: 'POST',
                 data: { query: query },
                 url: '/api/runPrimerDesigner',
-                headers: { 'Content-Type': 'application/json' }
-            });
-
-            return $q.when(call);
-        }
-
-        function runWriteFeatureToBed(filePath, feature){
-            var call = $http({
-                method: 'POST',
-                data: { filePath: filePath, feature: feature},
-                url: '/api/runWriteFeatureToBed',
                 headers: { 'Content-Type': 'application/json' }
             });
 

@@ -19,7 +19,7 @@ var TwitterStrategy = require('passport-twitter').Strategy;
 var exec = require('child_process').exec;
 
 var users = [
-    { id: 1, username: 'ml', password: 'lyon', email: 'test@test.co.uk', fullname: 'Matthew Lyon' }
+    { id: 1, username: 'ml', password: 'lyon', email: 'test@test.co.uk' }
 ];
 
 
@@ -126,7 +126,6 @@ app.post('/api/getNode', api.getNode);
 app.get('/api/getAllNodes', api.getAllNodes);
 app.post('/signin', api.signin);
 app.post('/api/runPrimerDesigner', api.runPrimerDesigner);
-app.post('/api/runWriteFeatureToBed', api.runWriteFeatureToBed);
 
 // Simple route middleware to ensure user is authenticated.
 // Use this route middleware on any resource that needs to be protected. If
@@ -141,5 +140,3 @@ function ensureAuthenticated(req, res, next) {
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
-
-

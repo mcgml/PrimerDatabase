@@ -355,18 +355,6 @@ exports.runPrimerDesigner = function (req, res) {
     });
 
 };
-    exports.runWriteFeatureToBed = function (req, res) {
-
-        //write input to BED for auomated analysis
-        fs.writeFile(req.body.filePath, req.body.feature, function(err) {
-
-            if(err) {
-                return console.log(err);
-            }
-
-        });
-
-    };
 
 
 
