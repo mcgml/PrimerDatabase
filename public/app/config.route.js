@@ -48,7 +48,7 @@
                     templateUrl: 'app/admin/query.html',
                     settings: {
                         nav: 5,
-                        content: '<i class="fa fa-crosshairs"></i> Search Primers'
+                        content: '<i class="fa fa-crosshairs"></i> Edit Primers'
                     }
                 }
             },

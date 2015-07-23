@@ -3,10 +3,10 @@
 
     // Organize the controller name and dependencies here for easy recognition
     var controllerId = 'create';
-    angular.module('app').controller(controllerId, ['common', 'datacontext', createCtrl]);
+    angular.module('app').controller(controllerId, ['common', 'datacontext', '$window', createCtrl]);
 
     // This is our controller...  think of it as a controller with a view model in it
-    function createCtrl(common, datacontext) {
+    function createCtrl(common, datacontext, $window) {
 
         // Organizing all of the variables and functions here allows us to get a quick look at
         // what the controller is doing
@@ -32,7 +32,8 @@
         function activate() {
             var promises = [];
             common.activateController(promises, controllerId)
-                .then(function () {});
+                .then(function (){
+                });
         }
 
         function checkCypherLog(){
@@ -42,7 +43,7 @@
 
                 var error = vm.neo4jReturn["error"];
                 var innerError = error["innerError"];
-                var errorMessage = innerError["message"]
+                var errorMessage = innerError["message"];
 
                 logError(errorMessage);
                 logError("Operation unsucessful");
@@ -60,7 +61,7 @@
 
         }
 
-        //add new deigner primer
+        ///auto new deigner primer
         function runPrimerDesigner(){
 
             //check and extract target region
@@ -87,22 +88,28 @@
                 return;
             }
 
-            vm.newAutoRegionOfInterest = "Running..."; //todo activate spinner
+            vm.newAutoRegionOfInterest = "Running..."; //TODO activate spinner
 
             return datacontext.runPrimerDesigner(fields[0] + "\t" + fields[1] + "\t" + fields[2]).then(function (result) {
                 
                 vm.newAutoRegionOfInterest = "Done!"; //todo deactivate spinner
+
                 vm.primerDesignerReturn = jQuery.parseJSON(result.data.stdout);
 
-                var query += "CREATE (uprimer:UpstreamPrimer {PrimerSequence:\"" + vm.primerDesignerReturn.leftSequence + "\", Tm: toFloat(" + vm.primerDesignerReturn.leftTm ")}), ";
-                query += "(dprimer:DownstreamPrimer {PrimerSequence:\"" + vm.primerDesignerReturn.rightSequence + "\"}), Tm: toFloat(" + vm.primerDesignerReturn.rightTm ")}), ";
-                query += "(uprimer)-[:HAS_TARGET]->(assay:Assay {Contig:\"" + vm.primerDesignerReturn.chromosome + "\", StartPos:toInt(" + vm.primerDesignerReturn.startPosition + "), EndPos:toInt(" + vm.primerDesignerReturn.endPosition + "), ReferenceGenome:\"GRCh37.75\"})<-[:HAS_TARGET]-(dprimer);";
+                if (vm.primerDesignerReturn.leftSequence == null || vm.primerDesignerReturn.leftTm == null || vm.primerDesignerReturn.rightSequence == null ||
+                    vm.primerDesignerReturn.rightTm == null || vm.primerDesignerReturn.chromosome == null || vm.primerDesignerReturn.startPosition == null || vm.primerDesignerReturn.endPosition == null){
+                    logError("Could not designer primers around the supplied target");
+                    return;
+                }
+
+                var query = "CREATE (uprimer:UpstreamPrimer {PrimerSequence:\"" + vm.primerDesignerReturn.leftSequence + "\", Tm:" + vm.primerDesignerReturn.leftTm + "}), ";
+                query += "(dprimer:DownstreamPrimer {PrimerSequence:\"" + vm.primerDesignerReturn.rightSequence + "\", Tm:" + vm.primerDesignerReturn.rightTm + "}), ";
+                query += "(uprimer)-[:HAS_TARGET]->(assay:Assay {Contig:\"" + vm.primerDesignerReturn.chromosome + "\", StartPos:toInt(" + vm.primerDesignerReturn.startPosition + "), EndPos:toInt(" + vm.primerDesignerReturn.endPosition + "), ReferenceGenome:\"GRCh37\"})<-[:HAS_TARGET]-(dprimer);";
 
                 //add upstream primer and order
                 return datacontext.runAdhocQuery(query).then(function (result) {
                     vm.neo4jReturn = result.data;
                     checkCypherLog();
-                    return;
                 });
 
             });
@@ -113,7 +120,7 @@
         function addManualPrimer() {
 
             var query;
-            boolean upstreamProvided = false, downstreamProvided = false;
+            var upstreamProvided = false, downstreamProvided = false;
 
             //check upstream primer entry
             if (vm.newManualUpstreamPrimerSequence != undefined && vm.newManualUpstreamPrimerSequence != ""){
@@ -199,27 +206,27 @@
                     return;
                 }
 
-                    //todo add Tms
-                    query = "MATCH (user:User {FullName:\"" + "Matthew Lyon" + "\"}) "; //todo get real username
-                    query += "CREATE (uprimer:UpstreamPrimer {PrimerSequence:\"" + vm.newManualUpstreamPrimerSequence + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user), ";
-                    query += "(dprimer:DownstreamPrimer {PrimerSequence:\"" + vm.newManualDownstreamPrimerSequence + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user), ";
-                    query += "(uprimer)-[:HAS_TARGET]->(assay:Assay {Contig:\"" + fields[0] + "\", StartPos:toInt(" + fields[1] + "), EndPos:toInt(" + fields[2] + "), ReferenceGenome:\"GRCh37.75\"})<-[:HAS_TARGET]-(dprimer), ";
-                    query += "(assay)<-[:DESIGNED_BY {Date:" + today.getTime() + "}]-(user);"
+                query = "MATCH (user:User {UserName:\"" + $window.sessionStorage.username + "\"}) ";
+                query += "CREATE (uprimer:UpstreamPrimer {PrimerSequence:\"" + vm.newManualUpstreamPrimerSequence + "\", Tm: " + vm.newManualUpstreamPrimerTm + ", Comments:\"" + vm.newManualUpstreamPrimerComments + "\", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user), ";
+                query += "(dprimer:DownstreamPrimer {PrimerSequence:\"" + vm.newManualDownstreamPrimerSequence + "\", Tm: " + vm.newManualDownstreamPrimerTm + ", Comments:\"" + vm.newManualDownstreamPrimerComments + "\", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user), ";
+                query += "(uprimer)-[:HAS_TARGET]->(assay:Assay {Contig:\"" + fields[0] + "\", StartPos:toInt(" + fields[1] + "), EndPos:toInt(" + fields[2] + "), ReferenceGenome:\"GRCh37\"})<-[:HAS_TARGET]-(dprimer), ";
+                query += "(assay)-[:DESIGNED_BY {Date:" + today.getTime() + "}]->(user);"
 
             } else if (upstreamProvided) {
 
-                    query = "MATCH (user:User {FullName:\"" + "Matthew Lyon" + "\"}) ";
-                    query += "CREATE (uprimer:UpstreamPrimer {PrimerSequence:\"" + vm.newManualUpstreamPrimerSequence + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user);";
+                query = "MATCH (user:User {UserName:\"" + $window.sessionStorage.username + "\"}) ";
+                query += "CREATE (uprimer:UpstreamPrimer {PrimerSequence:\"" + vm.newManualUpstreamPrimerSequence + "\", Tm: " + vm.newManualUpstreamPrimerTm + ", Comments:\"" + vm.newManualUpstreamPrimerComments + "\", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user);";
 
             } else if (downstreamProvided){
-                    query = "MATCH (user:User {FullName:\"" + "Matthew Lyon" + "\"}) ";
-                    query += "CREATE (dprimer:DownstreamPrimer {PrimerSequence:\"" + vm.newManualDownstreamstreamPrimerSequence + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user);";
+                
+                query = "MATCH (user:User {UserName:\"" + $window.sessionStorage.username + "\"}) ";
+                query += "(dprimer:DownstreamPrimer {PrimerSequence:\"" + vm.newManualDownstreamPrimerSequence + "\", Tm: " + vm.newManualDownstreamPrimerTm + ", Comments:\"" + vm.newManualDownstreamPrimerComments + "\", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user);";
+
             }
 
             return datacontext.runAdhocQuery(query).then(function (result) {
                 vm.neo4jReturn = result.data;
                 checkCypherLog();
-                return;
             });
 
         }
@@ -227,3 +234,4 @@
     }
 
 })();
+

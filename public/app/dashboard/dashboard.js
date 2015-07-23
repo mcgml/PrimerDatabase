@@ -71,7 +71,7 @@
             }).error(function (response) {
                 vm.message.user = response.message;
             });
-        }
+        };
 
         //order primers
         function orderPrimers() {

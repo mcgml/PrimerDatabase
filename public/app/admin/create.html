@@ -12,7 +12,7 @@
 
                                 <form class="form-horizontal" role="form">
                                      <div class="form-group">
-                                         <input type="text" class="form-control" placeholder="Enter Region of Interest (Required)" data-ng-model="vm.newAutoRegionOfInterest">
+                                         <input type="text" class="form-control" placeholder="Enter Region of Interest" data-ng-model="vm.newAutoRegionOfInterest">
                                      </div>
                                      <div class="form-group">
                                         <button class="btn btn-info" data-ng-click="vm.runPrimerDesigner()"><i class="glyphicon glyphicon-pencil"></i>Add</button>
@@ -30,32 +30,59 @@
                     <div data-cc-widget-header title="Add Custom Design" allow-collapse="true"></div>
                     <div class="widget-content">
                         <div class="row">
-                            <div class="col-md-6">
+
+                            <div class="col-md-4">
 
                                  <form class="form-horizontal" role="form">
                                      <div class="form-group">
-                                         <input type="text" class="form-control" placeholder="Enter Upstream Primer Sequence (Required)" data-ng-model="vm.newManualUpstreamPrimerSequence">
+                                         <input type="text" class="form-control" placeholder="Enter Upstream Primer Sequence" data-ng-model="vm.newManualUpstreamPrimerSequence">
+                                     </div>
+                                     <div class="form-group">
+                                         <input type="text" class="form-control" placeholder="Enter Downstream Primer Sequence" data-ng-model="vm.newManualDownstreamPrimerSequence">
                                      </div>
                                      <div class="form-group">
                                          <input type="text" class="form-control" placeholder="Enter Target Region" data-ng-model="vm.newManualTargetRegion">
                                      </div>
                                        <div class="form-group">
                                         <button class="btn btn-info" data-ng-click="vm.addManualPrimer()"><i class="glyphicon glyphicon-pencil"></i>Add</button>
-                                        <button class="btn btn-info" data-ng-click="vm.newManualAssayName = ''; vm.newManualTargetRegion = ''; vm.newManualUpstreamPrimerSequence = ''; vm.newManualDownstreamPrimerSequence = '';"><i class="glyphicon glyphicon-remove-sign"></i>Clear</button>
+                                        <button class="btn btn-info" data-ng-click="vm.newManualAssayName = ''; vm.newManualTargetRegion = ''; vm.newManualUpstreamPrimerSequence = ''; vm.newManualDownstreamPrimerSequence = ''; vm.newManualUpstreamPrimerTm = ''; vm.newManualDownstreamPrimerTm = ''; vm.newManualDownstreamPrimerComments = ''; vm.newManualUpstreamPrimerComments = ''; vm.newManualSNPDBExcluded = '';"><i class="glyphicon glyphicon-remove-sign"></i>Clear</button>
                                     </div>
                                  </form>
                                  
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-4">
 
                                 <form class="form-horizontal" role="form">
-                                     <div class="form-group">
-                                         <input type="text" class="form-control" placeholder="Enter Downstream Primer Sequence" data-ng-model="vm.newManualDownstreamPrimerSequence">
-                                     </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Enter Upstream Primer Tm" data-ng-model="vm.newManualUpstreamPrimerTm">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Enter Downtream Primer Tm" data-ng-model="vm.newManualDownstreamPrimerTm">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="SNP exclusion database(s) used" data-ng-model="vm.newManualSNPDBExcluded">
+                                    </div>
                                  </form>
 
                             </div>
+
+                            <div class="col-md-4">
+
+                                <form class="form-horizontal" role="form">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Comments" data-ng-model="vm.newManualUpstreamPrimerComments">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Comments" data-ng-model="vm.newManualDownstreamPrimerComments">
+                                    </div>
+                                    <div class="form-group">
+                                        <h6>Reference Genome: GRCh37/hg19</h6>
+                                    </div>
+                                </form>
+
+                            </div>
+
                         </div>
                     </div>
                 </div>

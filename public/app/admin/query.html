@@ -23,7 +23,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-11">
 
                                 <table class="table table-striped" ng-repeat="node in vm.regionofInterestNodes" ng-if="$index > 0">
                                     <thead>
@@ -33,12 +33,11 @@
                                             <th class="col-md-1">Contig</th>
                                             <th class="col-md-1">Start</th>
                                             <th class="col-md-1">End</th>
-                                            <th class="col-md-1">Left Sequence</th>
+                                            <th class="col-md-1">Upstream Sequence</th>
                                             <th class="col-md-1">Tm</th>
-                                            <th class="col-md-1">Right Sequence</th>
+                                            <th class="col-md-1">Downstream Sequence</th>
                                             <th class="col-md-1">Tm</th>
                                             <th class="col-md-1">Size</th>
-                                            <th class="col-md-1">Penality</th>
                                             <th class="col-md-1">Genome</th>
                                         </tr>
                                     </thead>
@@ -53,20 +52,21 @@
                                         <td>{{ node2.assay.data.Contig }}</td>
                                         <td>{{ node2.assay.data.StartPos }}</td>
                                         <td>{{ node2.assay.data.EndPos }}</td>
-                                        <td>{{ node2.leftPrimer.data.PrimerSequence }}</td>
-                                        <td>{{ node2.leftPrimer.data.Tm }}</td>
-                                        <td>{{ node2.rightPrimer.data.PrimerSequence }}</td>
-                                        <td>{{ node2.rightPrimer.data.Tm }}</td>
+                                        <td>{{ node2.upstreamPrimer.data.PrimerSequence }}</td>
+                                        <td>{{ node2.upstreamPrimer.data.Tm }}</td>
+                                        <td>{{ node2.downstreamPrimer.data.PrimerSequence }}</td>
+                                        <td>{{ node2.downstreamPrimer.data.Tm }}</td>
                                         <td>{{ node2.assay.data.EndPos - node2.assay.data.StartPos }}</td>
-                                        <td>{{ node2.assay.data.DesignPenality }}</td>
                                         <td>{{ node2.assay.data.ReferenceGenome }}</td>
                                         <tr ng-if="vm.assayInfoExpanded[$index]" ng-repeat-end="">
                                             <td></td>
-                                            <td><a href="http://localhost:60151/load?locus={{node2.assay.data.Contig}}:{{node2.assay.data.StartPos}}-{{node2.assay.data.EndPos}}&amp;genome=b37"><img src="../content/images/igv.png" border="0"></a></td>
-                                            <td colspan="3" ng-if="node2.user.data.FullName != null">Checked By: {{ node2.user.data.FullName }}</td>
-                                            <td ng-if="node2.user.data.FullName == null" colspan="3"><button ng-click="vm.addCheckedBy()">Check</td>
-                                            <td colspan="2" ng-if="node2.checker.data.Date != null"><mydate>Date: {{node2.checker.data.Date | date:'dd-MM-yy'}}</mydate></td>
-                                            <td colspan="5"></td>
+                                            <td><button ng-click="vm.bedFeatureForIGV = node2; vm.launchIGV()"><img src="../content/images/igv.png" border="0"></button></td>
+                                            <td ng-if="node2.user.data.UserName != null">Accepted By: {{ node2.user.data.UserName }}<mydate> {{node2.checker.data.Date | date:'dd-MM-yy'}}</mydate></td>
+                                            <td ng-if="node2.user.data.UserName == null"><button ng-click="vm.checkedAssayNodeId = node2.assay.id; vm.addCheckedBy()"></button>Accept Assay</td>
+                                            <td ng-if="node2.upstreamPrimer.data.Comments != null">Upstream Primer Comments: {{node2.upstreamPrimer.data.Comments}}</td>
+                                            <td ng-if="node2.downstreamPrimer.data.Comments != null">Downstream Primer Primer Comments: {{node2.downstreamPrimer.data.Comments}}</td>
+                                            <td ng-if="node2.upstreamPrimer.data.SNPDB != null">Upstream Primer Primer SNP check: {{node2.upstreamPrimer.data.SNPDB}}</td>
+                                            <td ng-if="node2.downstreamPrimer.data.SNPDB != null">Downstream Primer Primer SNP check: {{node2.downstreamPrimer.data.SNPDB}}</td>
                                         </tr>
                                     </tr>
                                 </table>

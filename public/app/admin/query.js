@@ -2,14 +2,14 @@
     'use strict';
 
     var controllerId = 'query';
-    angular.module('app').controller(controllerId, ['common', 'datacontext', query]);
+    angular.module('app').controller(controllerId, ['common', 'datacontext', '$window', query]);
 
-    function query(common, datacontext) {
+    function query(common, datacontext, $window) {
 
         var getLogFn = common.logger.getLogFn;
         var log = getLogFn(controllerId);
         var logError = getLogFn(controllerId, 'error');
-        var dateEpoch = new Date(0);
+        var today = new Date();
 
         var vm = this;
 
@@ -18,12 +18,15 @@
         vm.regionofInterestNodes = [];
         vm.assayInfoExpanded = [];
         vm.primerSequenceInfoExpanded = [];
+        vm.checkedAssayNodeId = [];
+        vm.bedFeatureForIGV = [];
 
         vm.addCheckedBy = addCheckedBy;
         vm.runPrimerNameQuery = runPrimerNameQuery;
         vm.runPrimerSequenceQuery = runPrimerSequenceQuery;
         vm.checkCypherLog = checkCypherLog;
         vm.runTargetRegionQuery = runTargetRegionQuery;
+        vm.launchIGV = launchIGV;
 
         activate();
 
@@ -40,7 +43,7 @@
 
                 var error = vm.neo4jReturn["error"];
                 var innerError = error["innerError"];
-                var errorMessage = innerError["message"]
+                var errorMessage = innerError["message"];
 
                 logError(errorMessage);
                 logError("Operation unsucessful");
@@ -59,6 +62,20 @@
         }
 
         function addCheckedBy(){
+            var query = "MATCH (user:User {UserName:\"" + $window.sessionStorage.username + "\"}) ";
+            query += "MATCH (assay:Assay) where id(assay) = " + vm.checkedAssayNodeId + " ";
+            query += "CREATE (user)<-[:CHECKED_BY {Date:" + today.getTime() + "}]-(assay);";
+
+            return datacontext.runAdhocQuery(query).then(function (result) {
+                vm.neo4jReturn = result.data;
+                checkCypherLog();
+                runTargetRegionQuery(); //update checked by field
+            });
+        }
+
+        function launchIGV(){
+            window.open("http://localhost:60151/load?file=" +  + "&locus=" + bedFeatureForIGV.assay.data.Contig + ":" + bedFeatureForIGV.assay.data.StartPos + "-" + bedFeatureForIGV.assay.data.EndPos + "&genome=b37");
+
         }
         
         function runPrimerNameQuery() {
@@ -83,11 +100,11 @@
             }
 
         var query = "MATCH (primer:Primer {PrimerSequence:\"" + vm.primerSequence + "\"}) ";
-            query += "MATCH (primer)-[hasOrder:HAS_ORDER]->(order:Order) ";
-            query += "MATCH (primer)-[hasTarget:HAS_TARGET]->(assay:Assay) ";
-            query += "MATCH (order)-[hasLocation:HAS_LOCATION]->(storageLocation:StorageLocation) ";
-            query += "MATCH (order)-[orderedBy:ORDERED_BY]->(orderUser:User) ";
-            query += "MATCH (order)-[receivedBy:RECEIVED_BY]->(receiveUser:User) ";
+            query += "OPTIONAL MATCH (primer)-[hasOrder:HAS_ORDER]->(order:Order) ";
+            query += "OPTIONAL MATCH (primer)-[hasTarget:HAS_TARGET]->(assay:Assay) ";
+            query += "OPTIONAL MATCH (order)-[hasLocation:HAS_LOCATION]->(storageLocation:StorageLocation) ";
+            query += "OPTIONAL MATCH (order)-[orderedBy:ORDERED_BY]->(orderUser:User) ";
+            query += "OPTIONAL MATCH (order)-[receivedBy:RECEIVED_BY]->(receiveUser:User) ";
             query += "return primer, receiveUser, orderUser, hasOrder, order;";
 
             return datacontext.runAdhocQuery(query).then(function (result) {
@@ -122,8 +139,9 @@
                 return;
             }
 
-            var query = "MATCH (leftPrimer:Primer)-[:HAS_TARGET]->(assay:Assay)<-[:HAS_TARGET]-(rightPrimer:Primer) where assay.Contig = \"" + fields[0] + "\" AND assay.StartPos <= toInt(" + fields[1] + ") AND assay.EndPos >= toInt(" + fields[2] + ") ";
-                query += "MATCH (assay)-[checker:CHECKED_BY]->(user:User) return leftPrimer, assay, rightPrimer, checker, user;";
+            var query = "MATCH (upstreamPrimer:UpstreamPrimer)-[:HAS_TARGET]->(assay:Assay)<-[:HAS_TARGET]-(downstreamPrimer:DownstreamPrimer) where assay.Contig = \"" + fields[0] + "\" AND assay.StartPos <= toInt(" + fields[1] + ") AND assay.EndPos >= toInt(" + fields[2] + ") ";
+                query += "OPTIONAL MATCH (assay)-[checker:CHECKED_BY]->(user:User) return upstreamPrimer, assay, downstreamPrimer, checker, user;";
+
             return datacontext.runAdhocQuery(query).then(function (result) {
                 vm.neo4jReturn = result.data;
                 checkCypherLog();
