@@ -8,4 +8,4 @@
         vm.title = "Restricted. Unauthorized Access";
         spinner.spinnerHide();
     }
-})()
+})();

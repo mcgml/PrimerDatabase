@@ -50,7 +50,7 @@
                                             <button ng-if="vm.assayInfoExpanded[$index]" class="glyphicon glyphicon-minus" ng-click="vm.assayInfoExpanded[$index] = false">
                                             </button>
                                         </td>
-                                        <td><button ng-click="vm.bedFeatureForIGV = node2.assay.data; vm.configureIGV()" img src="../content/images/igv.png"></button></td>
+                                        <td><button ng-click="vm.bedFeatureForIGV = node2.assay.data; vm.loadIGV()"><img src="../content/images/igv.png"></button></td>
                                         <td>{{ node2.assay.data.Contig }}</td>
                                         <td>{{ node2.assay.data.StartPos }}</td>
                                         <td>{{ node2.assay.data.EndPos }}</td>

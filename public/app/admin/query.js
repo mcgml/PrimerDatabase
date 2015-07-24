@@ -26,7 +26,7 @@
         vm.runPrimerSequenceQuery = runPrimerSequenceQuery;
         vm.checkCypherLog = checkCypherLog;
         vm.runTargetRegionQuery = runTargetRegionQuery;
-        vm.configureIGV = configureIGV;
+        vm.loadIGV = loadIGV;
 
         activate();
 
@@ -73,7 +73,7 @@
             });
         }
 
-        function configureIGV(){
+        function loadIGV(){
 
         }
         
