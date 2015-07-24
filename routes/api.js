@@ -9,7 +9,6 @@ var passport = require('passport');
 var jwt = require('jsonwebtoken');
 var proc = require('child_process');
 var fs = require('fs');
-var readline = require('readline');
 
 exports.signin = function(req, res, next) {
 	passport.authenticate('local', function(err, user, info) {
