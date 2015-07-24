@@ -36,15 +36,17 @@
                             <table class="table table-bordered" ng-repeat="node in vm.primersReadyForOrder" ng-if="$index > 0">
                                 <thead>
                                     <tr>
-                                        <th class="col-md-2" nowrap>#</th>
                                         <th class="col-md-5" nowrap>Primer Name</th>
                                         <th class="col-md-5" nowrap>Primer Sequence</th>
+                                        <th class="col-md-5" nowrap>Requester</th>
+                                        <th class="col-md-5" nowrap>Date Ordered</th>
                                     </tr>
                                 </thead>
                                 <tr ng-repeat="node2 in node">
-                                    <td class="col-md-2" nowrap>{{ $index + 1 }}</td>
                                     <td class="col-md-5" nowrap>{{ node2.order.data.PrimerName }}</td>
                                     <td class="col-md-5" nowrap>{{ node2.primer.data.PrimerSequence }}</td>
+                                    <td class="col-md-5" nowrap>{{ node2.user.data.UserName }}</td>
+                                    <td class="col-md-5" nowrap><mydate>{{ node2.orderedBy.data.Date | date:'dd-MM-yy' }}</mydate></td>
                                 </tr>
                             </table>
                             <p>

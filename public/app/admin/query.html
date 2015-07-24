@@ -23,12 +23,11 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-11">
+                            <div class="col-md-12">
 
                                 <table class="table table-striped" ng-repeat="node in vm.regionofInterestNodes" ng-if="$index > 0">
                                     <thead>
                                         <tr>
-                                            <th class="col-md-1">#</th>
                                             <th class="col-md-1">Info</th>
                                             <th class="col-md-1">View</th>
                                             <th class="col-md-1">Contig</th>
@@ -42,34 +41,43 @@
                                             <th class="col-md-1">Genome</th>
                                         </tr>
                                     </thead>
-                                    <tr ng-repeat-start="node2 in node">
-                                        <td>{{ $index + 1 }}</td>
-                                        <td>
-                                            <button ng-if="vm.assayInfoExpanded[$index] == undefined || !vm.assayInfoExpanded[$index]" class="glyphicon glyphicon-plus" ng-click="vm.assayInfoExpanded[$index] = true">
-                                            </button>
-                                            <button ng-if="vm.assayInfoExpanded[$index]" class="glyphicon glyphicon-minus" ng-click="vm.assayInfoExpanded[$index] = false">
-                                            </button>
-                                        </td>
-                                        <td><button ng-click="vm.bedFeatureForIGV = node2.assay.data; vm.loadIGV()"><img src="../content/images/igv.png"></button></td>
-                                        <td>{{ node2.assay.data.Contig }}</td>
-                                        <td>{{ node2.assay.data.StartPos }}</td>
-                                        <td>{{ node2.assay.data.EndPos }}</td>
-                                        <td>{{ node2.upstreamPrimer.data.PrimerSequence }}</td>
-                                        <td>{{ node2.upstreamPrimer.data.Tm }}</td>
-                                        <td>{{ node2.downstreamPrimer.data.PrimerSequence }}</td>
-                                        <td>{{ node2.downstreamPrimer.data.Tm }}</td>
-                                        <td>{{ node2.assay.data.EndPos - node2.assay.data.StartPos }}</td>
-                                        <td>{{ node2.assay.data.ReferenceGenome }}</td>
-                                        <tr ng-if="vm.assayInfoExpanded[$index]" ng-repeat-end="">
-                                            <td></td>
-                                            <td ng-if="node2.user.data.UserName != null">Accepted by: {{ node2.user.data.UserName }}<mydate> {{node2.checker.data.Date | date:'dd-MM-yy'}}</mydate></td>
-                                            <td ng-if="node2.user.data.UserName == null"><button ng-click="vm.checkedAssayNodeId = node2.assay.id; vm.addCheckedBy()"></button>Accept Assay</td>
-                                            <td ng-if="node2.upstreamPrimer.data.Comments != null">Upstream Primer Comments: {{node2.upstreamPrimer.data.Comments}}</td>
-                                            <td ng-if="node2.downstreamPrimer.data.Comments != null">Downstream Primer Primer Comments: {{node2.downstreamPrimer.data.Comments}}</td>
-                                            <td ng-if="node2.upstreamPrimer.data.SNPDB != null">Upstream Primer Primer SNP check: {{node2.upstreamPrimer.data.SNPDB}}</td>
-                                            <td ng-if="node2.downstreamPrimer.data.SNPDB != null">Downstream Primer Primer SNP check: {{node2.downstreamPrimer.data.SNPDB}}</td>
+                                    <tbody ng-repeat="node2 in node">
+                                        <tr>
+                                            <td>
+                                                <button ng-if="vm.assayInfoExpanded[$index] == undefined || !vm.assayInfoExpanded[$index]" class="glyphicon glyphicon-plus" ng-click="vm.assayInfoExpanded[$index] = true">
+                                                </button>
+                                                <button ng-if="vm.assayInfoExpanded[$index]" class="glyphicon glyphicon-minus" ng-click="vm.assayInfoExpanded[$index] = false">
+                                                </button>
+                                            </td>
+                                            <td><input type="image" src="../content/images/igv.png" ng-click="vm.bedFeatureForIGV = node2.assay.data; vm.loadIGV()"/></td>
+                                            <td>{{ node2.assay.data.Contig }}</td>
+                                            <td>{{ node2.assay.data.StartPos }}</td>
+                                            <td>{{ node2.assay.data.EndPos }}</td>
+                                            <td>{{ node2.primer1.data.PrimerSequence }}</td>
+                                            <td>{{ node2.primer1.data.Tm }}</td>
+                                            <td>{{ node2.primer2.data.PrimerSequence }}</td>
+                                            <td>{{ node2.primer2.data.Tm }}</td>
+                                            <td>{{ node2.assay.data.EndPos - node2.assay.data.StartPos }}</td>
+                                            <td>{{ node2.assay.data.ReferenceGenome }}</td>
+                                            <tr ng-show="vm.assayInfoExpanded[$index]">
+                                                <th></th>
+                                                <th>Checked</th>
+                                                <th>Upstream Primer Comments</th>
+                                                <th>Downstream Primer Comments</th>
+                                                <th>Upstream Primer SNP check</th>
+                                                <th>Downstream Primer SNP check</th>
+                                            </tr>
+                                            <tr ng-show="vm.assayInfoExpanded[$index]">
+                                                <td></td>
+                                                <td ng-show="node2.user.data.UserName != null">{{ node2.user.data.UserName }} <mydate>{{ node2.checker.data.Date | date:'dd-MM-yy' }}</mydate></td>
+                                                <td ng-show="node2.user.data.UserName == null"><button ng-click="vm.checkedAssayNodeId = node2.assay.id; vm.addCheckedBy()"><i class="glyphicon glyphicon-thumbs-up"></i></button></td>
+                                                <td ng-show="node2.primer1.data.Comments != null">{{node2.primer1.data.Comments}}</td>
+                                                <td ng-show="node2.primer2.data.Comments != null">{{node2.primer2.data.Comments}}</td>
+                                                <td ng-show="node2.primer1.data.SNPDB != null">{{node2.primer1.data.SNPDB}}</td>
+                                                <td ng-show="node2.primer2.data.SNPDB != null">{{node2.primer2.data.SNPDB}}</td>
+                                            </tr>
                                         </tr>
-                                    </tr>
+                                    </tbody>
                                 </table>
 
                             </div>
@@ -98,41 +106,61 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-5">
+                            <div class="col-md-9">
 
                                 <table class="table table-striped" ng-repeat="node in vm.primerSequenceNodes" ng-if="$index > 0">
                                     <thead>
                                         <tr>
-                                            <th class="col-md-1">#</th>
-                                            <th class="col-md-1">Info</th>
-                                            <th class="col-md-1">Sequence</th>
-                                            <th class="col-md-1">Tm</th>
+                                            <th>Order</th>
+                                            <th>Info</th>
+                                            <th>Name</th>
+                                            <th>Sequence (5'-3')</th>
+                                            <th>Tm</th>
+                                            <th>Submitter</th>
+                                            <th>Entered</th>
+                                            <th>SNP excluded database(s)</th>
+                                            <th>Comments</th>
                                         </tr>
                                     </thead>
-                                    <tr ng-repeat-start="node2 in node">
-                                        <td class="col-md-1">{{ $index + 1 }}</td>
-                                        <td class="col-md-1">
-                                            <button ng-if="vm.primerSequenceInfoExpanded[$index] == undefined || !vm.primerSequenceInfoExpanded[$index]" class="glyphicon glyphicon-plus" ng-click="vm.primerSequenceInfoExpanded[$index] = true">
+                                    <tbody ng-repeat="node2 in node">
+                                    <tr>
+                                        <td>
+                                            <button ng-if="vm.primerSequenceOrderExpanded[$index] == undefined || !vm.primerSequenceOrderExpanded[$index]" ng-click="vm.primerSequenceOrderExpanded[$index] = true" class="glyphicon glyphicon-plus">
                                             </button>
-                                            <button ng-if="vm.primerSequenceInfoExpanded[$index]" class="glyphicon glyphicon-minus" ng-click="vm.primerSequenceInfoExpanded[$index] = false">
+                                            <button ng-if="vm.primerSequenceOrderExpanded[$index]" ng-click="vm.primerSequenceOrderExpanded[$index] = false" class="glyphicon glyphicon-minus">
                                             </button>
                                         </td>
-                                        <td class="col-md-1">{{ node2.primer.data.PrimerSequence }}</td>
-                                        <td class="col-md-1">{{ node2.primer.data.Tm }}</td>
-                                        <tr ng-if="vm.primerSequenceInfoExpanded[$index]" ng-repeat-end="">
-                                            <td></td>
-                                            <td colspan="3">
-                                                Name: {{ node2.order.data.PrimerName }},
-                                                Purification: {{ node2.order.data.Purification }},
-                                                Supplier: {{ node2.order.data.Supplier }},
-                                                Scale: {{ node2.order.data.Scale }},
-                                                LotNumber: {{ node2.order.data.LotNumber }},
-                                                StorageLocation: {{ node2.storageLocation.data.Location }},
-                                                Ordered By: {{ node2.orderedBy.data.FullName }},
-                                                Received By: {{ node2.receivedBy.data.FullName }}
-                                            </td>
-                                        </tr>
+                                        <td>
+                                            <button ng-if="vm.primerSequenceInfoExpanded[$index] == undefined || !vm.primerSequenceInfoExpanded[$index]" ng-click="vm.primerSequenceInfoExpanded[$index] = true" class="glyphicon glyphicon-plus">
+                                            </button>
+                                            <button ng-if="vm.primerSequenceInfoExpanded[$index]" ng-click="vm.primerSequenceInfoExpanded[$index] = false" class="glyphicon glyphicon-minus">
+                                            </button>
+                                        </td>
+                                        <td>{{ node2.order.data.PrimerName }}</td>
+                                        <td>{{ node2.primer.data.PrimerSequence }}</td>
+                                        <td>{{ node2.primer.data.Tm }}</td>
+                                        <td>{{ node2.enterUser.data.UserName }}</td>
+                                        <td><mydate>{{ node2.enteredBy.data.Date | date:'dd-MM-yy' }}</mydate></td>
+                                        <td>{{ node2.primer.data.SNPDB }}</td>
+                                        <td>{{ node2.primer.data.Comments }}</td>
                                     </tr>
+                                    <tr ng-show="vm.primerSequenceOrderExpanded[$index]">
+                                        <td><button class="glyphicon glyphicon-shopping-cart" data-ng-click="vm.primerSequenceToBuyID = node2.primer.id;vm.orderPrimer()"></button></td>
+                                        <td><input type="text" class="form-control" placeholder="Enter 5' Modification" data-ng-model="vm.newPrimerFivePrimerMod"></td>
+                                        <td><input type="text" class="form-control" placeholder="Enter Primer Name" data-ng-model="vm.newPrimerName"></td>
+                                        <td><input type="text" class="form-control" placeholder="Enter 3' Modification" data-ng-model="vm.newPrimerThreePrimerMod"></td>
+                                        <td>Scale: <select ng-init="vm.selectedScale = vm.primerUMScales[0]" data-ng-model="vm.selectedScale" data-ng-options="scale for scale in vm.primerUMScales"></select></td>
+                                        <td>Purification: <select ng-init="vm.selectedPurification = vm.primerPurifications[0]" data-ng-model="vm.selectedPurification" data-ng-options="purification for purification in vm.primerPurifications"></select></td>
+                                        <td>Supplier: <select ng-init="vm.selectedSupplier = vm.primerSuppliers[0]" data-ng-model="vm.selectedSupplier" data-ng-options="supplier for supplier in vm.primerSuppliers"></select></td>
+                                    </tr>
+                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><th>Purification</th><td>{{ node2.order.data.Purification }}</td></tr>
+                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><th>Supplier</th><td>{{ node2.order.data.Supplier }}</td></tr>
+                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><th>Scale</th><td>{{ node2.order.data.Scale }}</td></tr>
+                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><th>Lot</th><td>{{ node2.order.data.LotNumber }}</td></tr>
+                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><th>Location</th><td>{{ node2.storageLocation.data.Location }}</td></tr>
+                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><th>Requester</th><td>{{ node2.orderedBy.data.FullName }}</td></tr>
+                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><th>Receiver</th><td>{{ node2.receivedBy.data.FullName }}</td></tr>
+                                    </tbody>
                                 </table>
 
                             </div>

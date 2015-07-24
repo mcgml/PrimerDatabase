@@ -102,9 +102,9 @@
                     return;
                 }
 
-                var query = "CREATE (uprimer:UpstreamPrimer {PrimerSequence:\"" + vm.primerDesignerReturn.leftSequence + "\", Tm:" + vm.primerDesignerReturn.leftTm + "}), ";
-                query += "(dprimer:DownstreamPrimer {PrimerSequence:\"" + vm.primerDesignerReturn.rightSequence + "\", Tm:" + vm.primerDesignerReturn.rightTm + "}), ";
-                query += "(uprimer)-[:HAS_TARGET]->(assay:Assay {Contig:\"" + vm.primerDesignerReturn.chromosome + "\", StartPos:toInt(" + vm.primerDesignerReturn.startPosition + "), EndPos:toInt(" + vm.primerDesignerReturn.endPosition + "), ReferenceGenome:\"GRCh37\"})<-[:HAS_TARGET]-(dprimer);";
+                var query = "CREATE (primer1:Primer {PrimerSequence:\"" + vm.primerDesignerReturn.leftSequence + "\", Tm:" + vm.primerDesignerReturn.leftTm + "}), ";
+                query += "(primer2:Primer {PrimerSequence:\"" + vm.primerDesignerReturn.rightSequence + "\", Tm:" + vm.primerDesignerReturn.rightTm + "}), ";
+                query += "(primer1)-[:HAS_DOWNSTREAM_TARGET]->(assay:Assay {Contig:\"" + vm.primerDesignerReturn.chromosome + "\", StartPos:toInt(" + vm.primerDesignerReturn.startPosition + "), EndPos:toInt(" + vm.primerDesignerReturn.endPosition + "), ReferenceGenome:\"GRCh37\"})<-[:HAS_UPSTREAM_TARGET]-(primer2);";
 
                 //add upstream primer and order
                 return datacontext.runAdhocQuery(query).then(function (result) {
@@ -207,20 +207,20 @@
                 }
 
                 query = "MATCH (user:User {UserName:\"" + $window.sessionStorage.username + "\"}) ";
-                query += "CREATE (uprimer:UpstreamPrimer {PrimerSequence:\"" + vm.newManualUpstreamPrimerSequence + "\", Tm: " + vm.newManualUpstreamPrimerTm + ", Comments:\"" + vm.newManualUpstreamPrimerComments + "\", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user), ";
-                query += "(dprimer:DownstreamPrimer {PrimerSequence:\"" + vm.newManualDownstreamPrimerSequence + "\", Tm: " + vm.newManualDownstreamPrimerTm + ", Comments:\"" + vm.newManualDownstreamPrimerComments + "\", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user), ";
-                query += "(uprimer)-[:HAS_TARGET]->(assay:Assay {Contig:\"" + fields[0] + "\", StartPos:toInt(" + fields[1] + "), EndPos:toInt(" + fields[2] + "), ReferenceGenome:\"GRCh37\"})<-[:HAS_TARGET]-(dprimer), ";
+                query += "CREATE (primer1:Primer {PrimerSequence:\"" + vm.newManualUpstreamPrimerSequence + "\", Tm: " + vm.newManualUpstreamPrimerTm + ", Comments:\"" + vm.newManualUpstreamPrimerComments + "\", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user), ";
+                query += "(primer2:Primer {PrimerSequence:\"" + vm.newManualDownstreamPrimerSequence + "\", Tm: " + vm.newManualDownstreamPrimerTm + ", Comments:\"" + vm.newManualDownstreamPrimerComments + "\", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user), ";
+                query += "(primer1)-[:HAS_DOWNSTREAM_TARGET]->(assay:Assay {Contig:\"" + fields[0] + "\", StartPos:toInt(" + fields[1] + "), EndPos:toInt(" + fields[2] + "), ReferenceGenome:\"GRCh37\"})<-[:HAS_UPSTREAM_TARGET]-(primer2), ";
                 query += "(assay)-[:DESIGNED_BY {Date:" + today.getTime() + "}]->(user);"
 
             } else if (upstreamProvided) {
 
                 query = "MATCH (user:User {UserName:\"" + $window.sessionStorage.username + "\"}) ";
-                query += "CREATE (uprimer:UpstreamPrimer {PrimerSequence:\"" + vm.newManualUpstreamPrimerSequence + "\", Tm: " + vm.newManualUpstreamPrimerTm + ", Comments:\"" + vm.newManualUpstreamPrimerComments + "\", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user);";
+                query += "CREATE (primer:Primer {PrimerSequence:\"" + vm.newManualUpstreamPrimerSequence + "\", Tm: " + vm.newManualUpstreamPrimerTm + ", Comments:\"" + vm.newManualUpstreamPrimerComments + "\", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user);";
 
             } else if (downstreamProvided){
                 
                 query = "MATCH (user:User {UserName:\"" + $window.sessionStorage.username + "\"}) ";
-                query += "(dprimer:DownstreamPrimer {PrimerSequence:\"" + vm.newManualDownstreamPrimerSequence + "\", Tm: " + vm.newManualDownstreamPrimerTm + ", Comments:\"" + vm.newManualDownstreamPrimerComments + "\", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user);";
+                query += "(primer:Primer {PrimerSequence:\"" + vm.newManualDownstreamPrimerSequence + "\", Tm: " + vm.newManualDownstreamPrimerTm + ", Comments:\"" + vm.newManualDownstreamPrimerComments + "\", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user);";
 
             }
 

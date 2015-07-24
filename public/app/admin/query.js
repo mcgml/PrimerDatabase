@@ -18,8 +18,10 @@
         vm.regionofInterestNodes = [];
         vm.assayInfoExpanded = [];
         vm.primerSequenceInfoExpanded = [];
+        vm.primerSequenceOrderExpanded = [];
         vm.checkedAssayNodeId = [];
         vm.bedFeatureForIGV = [];
+        vm.primerSequenceToBuyID = [];
 
         vm.addCheckedBy = addCheckedBy;
         vm.runPrimerNameQuery = runPrimerNameQuery;
@@ -27,6 +29,11 @@
         vm.checkCypherLog = checkCypherLog;
         vm.runTargetRegionQuery = runTargetRegionQuery;
         vm.loadIGV = loadIGV;
+        vm.orderPrimer = orderPrimer;
+        vm.primerPurifications = [ "DESALT", "RP1", "HPLC", "PAGE" ];
+        vm.primerUMScales = [0.025, 0.05, 0.2, 1, 10 ,15];
+        vm.primerM13Tag = [];
+        vm.primerSuppliers = ["Sigma"];
 
         activate();
 
@@ -76,9 +83,26 @@
         function loadIGV(){
 
         }
-        
+
+        function orderPrimer(){
+            if (vm.newPrimerName == undefined || vm.newPrimerName == ""){
+                logError('Enter a primer name');
+                return;
+            }
+
+            var query = "MATCH (user:User {UserName:\"" + $window.sessionStorage.username + "\"}) ";
+            query += "MATCH (primer:Primer) where id(primer) = " + vm.primerSequenceToBuyID + " ";
+            query += "CREATE (primer)-[:HAS_ORDER]->(order:Order :AwaitingOrder {PrimerName:\"" + vm.newPrimerName + "\", FivePrimeModification:\"" + vm.newPrimerFivePrimerMod + "\", ThreePrimerModification:\"" + vm.newPrimerThreePrimerMod + "\", Purification:\"" + vm.selectedPurification + "\", Scale:" + vm.selectedScale + ", Supplier:\"" + vm.selectedSupplier + "\"}) ";
+            query += "CREATE (order)-[:ORDERED_BY {Date:" + today.getTime() + "}]->(user);";
+
+            return datacontext.runAdhocQuery(query).then(function (result) {
+                vm.neo4jReturn = result.data;
+                checkCypherLog();
+            });
+        }
+
         function runPrimerNameQuery() {
-            
+
             if (vm.primerName == undefined || vm.primerName == ""){
                 logError('Enter a primer name');
                 return;
@@ -98,13 +122,14 @@
                 return;
             }
 
-        var query = "MATCH (primer:Primer {PrimerSequence:\"" + vm.primerSequence + "\"}) ";
-            query += "OPTIONAL MATCH (primer)-[hasOrder:HAS_ORDER]->(order:Order) ";
-            query += "OPTIONAL MATCH (primer)-[hasTarget:HAS_TARGET]->(assay:Assay) ";
-            query += "OPTIONAL MATCH (order)-[hasLocation:HAS_LOCATION]->(storageLocation:StorageLocation) ";
+            var query = "MATCH (primer:Primer {PrimerSequence:\"" + vm.primerSequence + "\"}) ";
+            query += "OPTIONAL MATCH (primer)-[:HAS_ORDER]->(order:Order) ";
+            query += "OPTIONAL MATCH (primer)-[:HAS_UPSTREAM_TARGET|:HAS_DOWNSTREAM_TARGET]->(assay:Assay) ";
+            query += "OPTIONAL MATCH (order)-[:HAS_LOCATION]->(storageLocation:StorageLocation) ";
+            query += "OPTIONAL MATCH (primer)-[enteredBy:ENTERED_BY]->(enterUser:User) ";
             query += "OPTIONAL MATCH (order)-[orderedBy:ORDERED_BY]->(orderUser:User) ";
             query += "OPTIONAL MATCH (order)-[receivedBy:RECEIVED_BY]->(receiveUser:User) ";
-            query += "return primer, receiveUser, orderUser, hasOrder, order;";
+            query += "return primer, enteredBy, enterUser, receiveUser, orderUser, order;";
 
             return datacontext.runAdhocQuery(query).then(function (result) {
                 vm.neo4jReturn = result.data;
@@ -138,8 +163,8 @@
                 return;
             }
 
-            var query = "MATCH (upstreamPrimer:UpstreamPrimer)-[:HAS_TARGET]->(assay:Assay)<-[:HAS_TARGET]-(downstreamPrimer:DownstreamPrimer) where assay.Contig = \"" + fields[0] + "\" AND assay.StartPos <= toInt(" + fields[1] + ") AND assay.EndPos >= toInt(" + fields[2] + ") ";
-                query += "OPTIONAL MATCH (assay)-[checker:CHECKED_BY]->(user:User) return upstreamPrimer, assay, downstreamPrimer, checker, user;";
+            var query = "MATCH (primer1:Primer)-[:HAS_DOWNSTREAM_TARGET]->(assay:Assay)<-[:HAS_UPSTREAM_TARGET]-(primer2:Primer) where assay.Contig = \"" + fields[0] + "\" AND assay.StartPos <= toInt(" + fields[1] + ") AND assay.EndPos >= toInt(" + fields[2] + ") ";
+                query += "OPTIONAL MATCH (assay)-[checker:CHECKED_BY]->(user:User) return primer1, assay, primer2, checker, user;";
 
             return datacontext.runAdhocQuery(query).then(function (result) {
                 vm.neo4jReturn = result.data;
