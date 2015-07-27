@@ -6,6 +6,7 @@
     function dashboard(common, datacontext, $window, $location) {
         var getLogFn = common.logger.getLogFn;
         var log = getLogFn(controllerId);
+        var logError = getLogFn(controllerId, 'error');
         var $http = common.$http;
 
         var vm = this;
@@ -19,10 +20,12 @@
         vm.credentials = {};
         vm.primersReadyForOrder = [];
         vm.primersAwaitingReceipt = [];
+        vm.neo4jReturn = [];
 
         vm.initPrimersForOrder = initPrimersForOrder;
         vm.initPrimersForReceipt = initPrimersForReceipt;
         vm.orderPrimers = orderPrimers;
+        vm.checkCypherLog = checkCypherLog;
 
         activate();
 
@@ -73,28 +76,64 @@
             });
         };
 
+        function checkCypherLog(){
+
+            //check result
+            if (vm.neo4jReturn["error"] != null){
+
+                var error = vm.neo4jReturn["error"];
+                var innerError = error["innerError"];
+                var errorMessage = innerError["message"];
+
+                logError(errorMessage);
+                logError("Operation unsucessful");
+
+            } else {
+
+                var responseData = vm.neo4jReturn[responseData];
+
+                for (var r in responseData){
+                    log(r + ":" + responseData[r]);
+                }
+
+                log("Operation successful");
+            }
+
+        }
+
         //order primers
         function orderPrimers() {
-            return datacontext.runAdhocQuery("MATCH (order:AwaitingOrder)<-[:HAS_ORDER]-(primer:Primer) return order, primer;").then(function (result) {
+            return datacontext.runAdhocQuery("").then(function (result) {
+                vm.neo4jReturn = result.data;
+                checkCypherLog();
                 return vm.primersReadyForOrder = result.data;
             });
+
+            vm.initPrimersForOrder();
+            vm.initPrimersForReceipt();
         }
 
         function removeFroOrder(){
+            return datacontext.runAdhocQuery("").then(function (result) {
+                vm.neo4jReturn = result.data;
+                checkCypherLog();
+                return vm.primersReadyForOrder = result.data;
+            });
+
             vm.initPrimersForOrder();
             vm.initPrimersForReceipt();
         }
 
         ///check for primers ready to order at page load
         function initPrimersForOrder() {
-            return datacontext.runAdhocQuery("MATCH (order:AwaitingOrder)<-[:HAS_ORDER]-(primer:Primer) return order, primer;").then(function (result) {
+            return datacontext.runAdhocQuery("MATCH (user:User)<-[orderedBy:ORDERED_BY]-(order:AwaitingOrder)<-[:HAS_ORDER]-(primer:Primer) return order, primer, user, orderedBy;").then(function (result) {
                 return vm.primersReadyForOrder = result.data;
             });
         }
 
         ///check for primers ready to Receipt at page load
         function initPrimersForReceipt() {
-            return datacontext.runAdhocQuery("MATCH (order:AwaitingReceipt)<-[:HAS_ORDER]-(primer:Primer) return order, primer;").then(function (result) {
+            return datacontext.runAdhocQuery("MATCH (user:User)<-[orderedBy:ORDERED_BY]-(order:AwaitingReceipt)<-[:HAS_ORDER]-(primer:Primer) return order, primer, user, orderedBy;").then(function (result) {
                 return vm.primersAwaitingReceipt = result.data;
             });
         }

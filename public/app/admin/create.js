@@ -92,7 +92,7 @@
 
             return datacontext.runPrimerDesigner(fields[0] + "\t" + fields[1] + "\t" + fields[2]).then(function (result) {
                 
-                vm.newAutoRegionOfInterest = "Done!"; //todo deactivate spinner
+                vm.newAutoRegionOfInterest = "Done!"; //TODO deactivate spinner
 
                 vm.primerDesignerReturn = jQuery.parseJSON(result.data.stdout);
 
@@ -119,7 +119,7 @@
         //add manual primer
         function addManualPrimer() {
 
-            var query;
+            var query = "MATCH (user:User {UserName:\"" + $window.sessionStorage.username + "\"}) ";
             var upstreamProvided = false, downstreamProvided = false;
 
             //check upstream primer entry
@@ -188,6 +188,17 @@
                     logError('Enter a target region');
                     return;
                 }
+                //check Tm has been entered
+                if (vm.newManualUpstreamPrimerTm == undefined || vm.newManualUpstreamPrimerTm == ""){
+                    logError('Enter upstream primer Tm');
+                    return;
+                }
+                //check Tm has been entered
+                if (vm.newManualDownstreamPrimerTm == undefined || vm.newManualDownstreamPrimerTm == ""){
+                    logError('Enter downstream primer Tm');
+                    return;
+                }
+
                 var fields = vm.newManualTargetRegion.split(/:|-/);
                 var prefix = vm.newManualTargetRegion.substring(0, 3);
 
@@ -206,22 +217,27 @@
                     return;
                 }
 
-                query = "MATCH (user:User {UserName:\"" + $window.sessionStorage.username + "\"}) ";
                 query += "CREATE (primer1:Primer {PrimerSequence:\"" + vm.newManualUpstreamPrimerSequence + "\", Tm: " + vm.newManualUpstreamPrimerTm + ", Comments:\"" + vm.newManualUpstreamPrimerComments + "\", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user), ";
                 query += "(primer2:Primer {PrimerSequence:\"" + vm.newManualDownstreamPrimerSequence + "\", Tm: " + vm.newManualDownstreamPrimerTm + ", Comments:\"" + vm.newManualDownstreamPrimerComments + "\", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user), ";
                 query += "(primer1)-[:HAS_DOWNSTREAM_TARGET]->(assay:Assay {Contig:\"" + fields[0] + "\", StartPos:toInt(" + fields[1] + "), EndPos:toInt(" + fields[2] + "), ReferenceGenome:\"GRCh37\"})<-[:HAS_UPSTREAM_TARGET]-(primer2), ";
                 query += "(assay)-[:DESIGNED_BY {Date:" + today.getTime() + "}]->(user);"
 
             } else if (upstreamProvided) {
-
-                query = "MATCH (user:User {UserName:\"" + $window.sessionStorage.username + "\"}) ";
-                query += "CREATE (primer:Primer {PrimerSequence:\"" + vm.newManualUpstreamPrimerSequence + "\", Tm: " + vm.newManualUpstreamPrimerTm + ", Comments:\"" + vm.newManualUpstreamPrimerComments + "\", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user);";
-
+                //check Tm has been entered
+                if (vm.newManualUpstreamPrimerTm == undefined || vm.newManualUpstreamPrimerTm == ""){
+                    logError('Enter upstream primer Tm');
+                    return;
+                }
+                query += "CREATE (primer:Primer {PrimerSequence:\"" + vm.newManualUpstreamPrimerSequence + "\", Tm: " + vm.newManualUpstreamPrimerTm + ", Comments:\"" + vm.newManualUpstreamPrimerComments + "\", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"";
+                query += "})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user);";
             } else if (downstreamProvided){
-                
-                query = "MATCH (user:User {UserName:\"" + $window.sessionStorage.username + "\"}) ";
-                query += "(primer:Primer {PrimerSequence:\"" + vm.newManualDownstreamPrimerSequence + "\", Tm: " + vm.newManualDownstreamPrimerTm + ", Comments:\"" + vm.newManualDownstreamPrimerComments + "\", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user);";
-
+                //check Tm has been entered
+                if (vm.newManualDownstreamPrimerTm == undefined || vm.newManualDownstreamPrimerTm == ""){
+                    logError('Enter downstream primer Tm');
+                    return;
+                }
+                query += "CREATE (primer:Primer {PrimerSequence:\"" + vm.newManualDownstreamPrimerSequence + "\", Tm: " + vm.newManualDownstreamPrimerTm + ", Comments:\"" + vm.newManualDownstreamPrimerComments + "\", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"";
+                query += "})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user);";
             }
 
             return datacontext.runAdhocQuery(query).then(function (result) {

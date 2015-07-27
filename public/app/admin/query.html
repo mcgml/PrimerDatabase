@@ -12,7 +12,7 @@
                             <div class="col-md-4">
                                 <form class="form-horizontal" role="form">
                                     <div class="form-group">
-                                        <input type="text" class="form-control" placeholder="Enter Target Region" data-ng-model="vm.targetRegion">
+                                        <input type="text" class="form-control" placeholder="Enter Target Region (GRCh37/hg19)" data-ng-model="vm.targetRegion">
                                     </div>
                                     <div class="form-group">
                                         <button class="btn btn-info" data-ng-click="vm.runTargetRegionQuery()"><i class="glyphicon glyphicon-search"></i>Search</button>
@@ -28,17 +28,17 @@
                                 <table class="table table-striped" ng-repeat="node in vm.regionofInterestNodes" ng-if="$index > 0">
                                     <thead>
                                         <tr>
-                                            <th class="col-md-1">Info</th>
-                                            <th class="col-md-1">View</th>
-                                            <th class="col-md-1">Contig</th>
-                                            <th class="col-md-1">Start</th>
-                                            <th class="col-md-1">End</th>
-                                            <th class="col-md-1">Upstream Sequence</th>
-                                            <th class="col-md-1">Tm</th>
-                                            <th class="col-md-1">Downstream Sequence</th>
-                                            <th class="col-md-1">Tm</th>
-                                            <th class="col-md-1">Size</th>
-                                            <th class="col-md-1">Genome</th>
+                                            <th>Info</th>
+                                            <th>View</th>
+                                            <th>Contig</th>
+                                            <th>Start</th>
+                                            <th>End</th>
+                                            <th>Upstream Sequence</th>
+                                            <th>Tm</th>
+                                            <th>Downstream Sequence</th>
+                                            <th>Tm</th>
+                                            <th>Size</th>
+                                            <th>Genome</th>
                                         </tr>
                                     </thead>
                                     <tbody ng-repeat="node2 in node">
@@ -106,20 +106,20 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-9">
+                            <div class="col-md-12">
 
                                 <table class="table table-striped" ng-repeat="node in vm.primerSequenceNodes" ng-if="$index > 0">
                                     <thead>
                                         <tr>
-                                            <th>Order</th>
-                                            <th>Info</th>
-                                            <th>Name</th>
-                                            <th>Sequence (5'-3')</th>
-                                            <th>Tm</th>
-                                            <th>Submitter</th>
-                                            <th>Entered</th>
-                                            <th>SNP excluded database(s)</th>
-                                            <th>Comments</th>
+                                            <th nowrap>Order</th>
+                                            <th nowrap>Info</th>
+                                            <th nowrap>Name</th>
+                                            <th nowrap>Sequence (5'-3')</th>
+                                            <th nowrap>Tm</th>
+                                            <th nowrap>Submitter</th>
+                                            <th nowrap>Entered</th>
+                                            <th nowrap>SNP excluded database(s)</th>
+                                            <th nowrap>Comments</th>
                                         </tr>
                                     </thead>
                                     <tbody ng-repeat="node2 in node">
@@ -146,9 +146,9 @@
                                     </tr>
                                     <tr ng-show="vm.primerSequenceOrderExpanded[$index]">
                                         <td><button class="glyphicon glyphicon-shopping-cart" data-ng-click="vm.primerSequenceToBuyID = node2.primer.id;vm.orderPrimer()"></button></td>
-                                        <td><input type="text" class="form-control" placeholder="Enter 5' Modification" data-ng-model="vm.newPrimerFivePrimerMod"></td>
-                                        <td><input type="text" class="form-control" placeholder="Enter Primer Name" data-ng-model="vm.newPrimerName"></td>
-                                        <td><input type="text" class="form-control" placeholder="Enter 3' Modification" data-ng-model="vm.newPrimerThreePrimerMod"></td>
+                                        <td><input type="text" class="form-control" placeholder="5' Mod" data-ng-model="vm.newPrimerFivePrimerMod"></td>
+                                        <td><input type="text" class="form-control" placeholder="Primer Name" data-ng-model="vm.newPrimerName"></td>
+                                        <td><input type="text" class="form-control" placeholder="3' Mod" data-ng-model="vm.newPrimerThreePrimerMod"></td>
                                         <td>Scale: <select ng-init="vm.selectedScale = vm.primerUMScales[0]" data-ng-model="vm.selectedScale" data-ng-options="scale for scale in vm.primerUMScales"></select></td>
                                         <td>Purification: <select ng-init="vm.selectedPurification = vm.primerPurifications[0]" data-ng-model="vm.selectedPurification" data-ng-options="purification for purification in vm.primerPurifications"></select></td>
                                         <td>Supplier: <select ng-init="vm.selectedSupplier = vm.primerSuppliers[0]" data-ng-model="vm.selectedSupplier" data-ng-options="supplier for supplier in vm.primerSuppliers"></select></td>
@@ -158,8 +158,8 @@
                                     <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><th>Scale</th><td>{{ node2.order.data.Scale }}</td></tr>
                                     <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><th>Lot</th><td>{{ node2.order.data.LotNumber }}</td></tr>
                                     <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><th>Location</th><td>{{ node2.storageLocation.data.Location }}</td></tr>
-                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><th>Requester</th><td>{{ node2.orderedBy.data.FullName }}</td></tr>
-                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><th>Receiver</th><td>{{ node2.receivedBy.data.FullName }}</td></tr>
+                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><th>Requester</th><td>{{ node2.requestedBy.data.UserName }}</td></tr>
+                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><th>Receiver</th><td>{{ node2.receivedBy.data.UserName }}</td></tr>
                                     </tbody>
                                 </table>
 

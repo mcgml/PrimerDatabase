@@ -22,6 +22,7 @@
         vm.checkedAssayNodeId = [];
         vm.bedFeatureForIGV = [];
         vm.primerSequenceToBuyID = [];
+        vm.neo4jReturn = [];
 
         vm.addCheckedBy = addCheckedBy;
         vm.runPrimerNameQuery = runPrimerNameQuery;
@@ -93,7 +94,7 @@
             var query = "MATCH (user:User {UserName:\"" + $window.sessionStorage.username + "\"}) ";
             query += "MATCH (primer:Primer) where id(primer) = " + vm.primerSequenceToBuyID + " ";
             query += "CREATE (primer)-[:HAS_ORDER]->(order:Order :AwaitingOrder {PrimerName:\"" + vm.newPrimerName + "\", FivePrimeModification:\"" + vm.newPrimerFivePrimerMod + "\", ThreePrimerModification:\"" + vm.newPrimerThreePrimerMod + "\", Purification:\"" + vm.selectedPurification + "\", Scale:" + vm.selectedScale + ", Supplier:\"" + vm.selectedSupplier + "\"}) ";
-            query += "CREATE (order)-[:ORDERED_BY {Date:" + today.getTime() + "}]->(user);";
+            query += "CREATE (order)-[:REQUESTED_BY {Date:" + today.getTime() + "}]->(user);";
 
             return datacontext.runAdhocQuery(query).then(function (result) {
                 vm.neo4jReturn = result.data;
@@ -127,9 +128,9 @@
             query += "OPTIONAL MATCH (primer)-[:HAS_UPSTREAM_TARGET|:HAS_DOWNSTREAM_TARGET]->(assay:Assay) ";
             query += "OPTIONAL MATCH (order)-[:HAS_LOCATION]->(storageLocation:StorageLocation) ";
             query += "OPTIONAL MATCH (primer)-[enteredBy:ENTERED_BY]->(enterUser:User) ";
-            query += "OPTIONAL MATCH (order)-[orderedBy:ORDERED_BY]->(orderUser:User) ";
+            query += "OPTIONAL MATCH (order)-[requestedBy:REQUESTED_BY]->(requesterUser:User) ";
             query += "OPTIONAL MATCH (order)-[receivedBy:RECEIVED_BY]->(receiveUser:User) ";
-            query += "return primer, enteredBy, enterUser, receiveUser, orderUser, order;";
+            query += "return primer, enteredBy, enterUser, receiveUser, requestedBy, requesterUser, order;";
 
             return datacontext.runAdhocQuery(query).then(function (result) {
                 vm.neo4jReturn = result.data;
@@ -148,12 +149,12 @@
             var fields = vm.targetRegion.split(/:|-/);
             var prefix = vm.targetRegion.substring(0, 3);
 
-            if (fields.length != 3){
+            if (fields.length != 3 || fields[0] == "" || fields[1] == "" || fields[2] == ""){
                 logError('Target location format is chr:start-end');
                 return;
             }
 
-            if (prefix == "chr"){
+            if (prefix.toLowerCase() == "chr"){
                 logError('Do not use the chr prefix');
                 return;
             }
