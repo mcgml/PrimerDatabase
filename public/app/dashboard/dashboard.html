@@ -33,20 +33,30 @@
                     <div class="widget wblue">
                         <div data-cc-widget-header title="Primers awaiting order" allow-collapse="true"></div>
                         <div class="widget-content">
-                            <table class="table table-bordered" ng-repeat="node in vm.primersReadyForOrder" ng-if="$index > 0">
+                            <table class="table table-striped" ng-repeat="node in vm.primersRequestedForOrder" ng-if="$index > 0">
                                 <thead>
                                     <tr>
                                         <th>Primer Name</th>
+                                        <th>5' Mod</th>
                                         <th>Primer Sequence</th>
+                                        <th>3' Mod</th>
+                                        <th>Purification</th>
+                                        <th>Scale (uM)</th>
+                                        <th>Supplier</th>
                                         <th>Requester</th>
-                                        <th>Added to Queue</th>
+                                        <th>Requested</th>
                                     </tr>
                                 </thead>
                                 <tr ng-repeat="node2 in node">
                                     <td>{{ node2.order.data.PrimerName }}</td>
+                                    <td>{{ node2.order.data.FivePrimeModification }}</td>
                                     <td>{{ node2.primer.data.PrimerSequence }}</td>
+                                    <td>{{ node2.order.data.ThreePrimeModification }}</td>
+                                    <td>{{ node2.order.data.Purification }}</td>
+                                    <td>{{ node2.order.data.Scale }}</td>
+                                    <td>{{ node2.order.data.Supplier }}</td>
                                     <td>{{ node2.user.data.UserName }}</td>
-                                    <td><mydate>{{ node2.orderedBy.data.Date | date:'dd-MM-yy' }}</mydate></td>
+                                    <td><mydate>{{ node2.requestedBy.data.Date | date:'dd-MM-yy' }}</mydate></td>
                                 </tr>
                             </table>
                             <p>
@@ -63,19 +73,30 @@
                     <div class="widget wblue">
                         <div data-cc-widget-header title="Primers awaiting receipt" allow-collapse="true"></div>
                         <div class="widget-content">
-                            <table class="table table-bordered" ng-repeat="node in vm.primersAwaitingReceipt" ng-if="$index > 0">
+                            <table class="table table-striped" ng-repeat="node in vm.primersAwaitingReceipt" ng-if="$index > 0">
                                 <thead>
                                     <tr>
-                                        <th class="col-md-5" nowrap>Primer Name</th>
-                                        <th class="col-md-5" nowrap>Primer Sequence</th>
-                                        <th>Submitter</th>
-                                        <th>Order Date</th>
+                                        <th>Primer Name</th>
+                                        <th>5' Mod</th>
+                                        <th>Primer Sequence</th>
+                                        <th>3' Mod</th>
+                                        <th>Purification</th>
+                                        <th>Scale (uM)</th>
+                                        <th>Supplier</th>
+                                        <th>Requester</th>
+                                        <th>Ordered</th>
                                     </tr>
                                 </thead>
                                 <tr ng-repeat="node2 in node">
-                                    <td class="col-md-2" nowrap>{{ $index + 1 }}</td>
-                                    <td class="col-md-5" nowrap>{{ node2.order.data.PrimerName }}</td>
-                                    <td class="col-md-5" nowrap>{{ node2.primer.data.PrimerSequence }}</td>
+                                    <td>{{ node2.order.data.PrimerName }}</td>
+                                    <td>{{ node2.order.data.FivePrimeModification }}</td>
+                                    <td>{{ node2.primer.data.PrimerSequence }}</td>
+                                    <td>{{ node2.order.data.ThreePrimeModification }}</td>
+                                    <td>{{ node2.order.data.Purification }}</td>
+                                    <td>{{ node2.order.data.Scale }}</td>
+                                    <td>{{ node2.order.data.Supplier }}</td>
+                                    <td>{{ node2.user.data.UserName }}</td>
+                                    <td><mydate>{{ node2.orderedBy.data.Date | date:'dd-MM-yy' }}</mydate></td>
                                 </tr>
                             </table>
                         </div>

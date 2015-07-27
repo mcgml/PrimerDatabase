@@ -43,8 +43,10 @@
             isNumber: isNumber,
             logger: logger, // for accessibility
             textContains: textContains,
-            $http: $http
-            
+            $http: $http,
+            checkGenomicTargetForm : checkGenomicTargetForm,
+            checkCypherLog : checkCypherLog,
+            checkDNAIsIUPAC : checkDNAIsIUPAC
         };
 
         return service;
@@ -129,6 +131,122 @@
 
         function textContains(text, searchText) {
             return text && -1 !== text.toLowerCase().indexOf(searchText.toLowerCase());
+        }
+
+        function checkGenomicTargetForm(input){
+
+            var obj = [];
+            obj.error = false;
+
+            //check and extract target region
+            if (input == undefined || input == ""){
+                obj.errorMessage = 'Enter a target region';
+                obj.error = true;
+                return obj;
+            }
+
+            var fields = input.split(/:|-/);
+
+            if (fields.length != 3 || fields[0] == "" || fields[1] == "" || fields[2] == ""){
+                obj.errorMessage = 'Target location format is chr:start-end';
+                obj.error = true;
+                return obj;
+            }
+
+            var prefix = input.substring(0, 3);
+
+            if (prefix.toLowerCase() == "chr"){
+                obj.errorMessage = 'Do not use the chr prefix';
+                obj.error = true;
+                return obj;
+            }
+
+            if (parseInt(fields[1]) > parseInt(fields[2])){
+                obj.errorMessage = 'Coordinates should be ascending';
+                obj.error = true;
+                return obj;
+            }
+
+            return obj;
+
+        }
+
+        function checkCypherLog(input){
+
+            var obj = [];
+            obj.error = false;
+
+            //check result
+            if (input["error"] != null){
+
+                var error = input["error"];
+                var innerError = error["innerError"];
+                var errorMessage = innerError["message"];
+
+                obj.errorMessage = errorMessage;
+                obj.error = true;
+
+            }
+
+            if (input["responseData"] != null){
+
+                var response;
+                var responseData = input["responseData"];
+
+                for (var r in responseData){
+                    response += r + ":" + responseData[r] + "\n";
+                }
+
+                obj.sucessMessage = response;
+            }
+
+            return obj;
+
+        }
+
+        function checkDNAIsIUPAC(input){
+
+            var obj = [];
+            obj.error = false;
+
+            var upperCaseSequence = input.toUpperCase();
+
+            if (input == "" || input == undefined){
+                obj.error = true;
+                obj.errorMessage = 'Please supply DNA sequence';
+                return obj;
+            }
+
+            //check sequence for non-IUPAC
+            for (var i = 0, len = input.length; i < len; i++) {
+
+                if (upperCaseSequence[i] != 'A' &&
+                    upperCaseSequence[i] != 'T' &&
+                    upperCaseSequence[i] != 'G' &&
+                    upperCaseSequence[i] != 'C' &&
+                    upperCaseSequence[i] != 'U' &&
+                    upperCaseSequence[i] != 'R' &&
+                    upperCaseSequence[i] != 'Y' &&
+                    upperCaseSequence[i] != 'S' &&
+                    upperCaseSequence[i] != 'W' &&
+                    upperCaseSequence[i] != 'K' &&
+                    upperCaseSequence[i] != 'M' &&
+                    upperCaseSequence[i] != 'B' &&
+                    upperCaseSequence[i] != 'D' &&
+                    upperCaseSequence[i] != 'H' &&
+                    upperCaseSequence[i] != 'V' &&
+                    upperCaseSequence[i] != 'N' ){
+
+                    obj.error = true;
+                    obj.errorMessage = 'DNA sequence contains non-IUPAC bases';
+
+                    return obj;
+
+                }
+
+            }
+
+            return obj;
         }
     }
 })();

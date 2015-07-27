@@ -323,7 +323,7 @@ exports.getAllNodes = function(req, res) {
 };
 
 
-exports.runPrimerDesigner = function (req, res) {
+/*exports.runPrimerDesigner = function (req, res) {
     
     var d = new Date();
     var n = d.getTime();
@@ -353,7 +353,29 @@ exports.runPrimerDesigner = function (req, res) {
 
     });
 
-};
+};*/
+
+    exports.runPrimerDesigner = function (req, res) {
+
+        var fields = req.body.query.split(/:|-/);
+        var command = 'java -jar /Users/ml/IdeaProjects/PrimerDesigner/out/artifacts/PrimerDesigner_jar/PrimerDesigner.jar ' + fields[0] + " " + fields[1] + " " + fields[2];
+
+        //execute design
+        proc.exec(command, function callback(error, stdout, stderr){
+
+            if (error){
+                throw error;
+            }
+
+            res.json({
+                stdout: stdout,
+                stderr: stderr,
+                error: error
+            });
+
+        });
+
+    };
 
 
 

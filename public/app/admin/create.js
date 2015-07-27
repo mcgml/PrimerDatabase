@@ -17,12 +17,9 @@
 
         var vm = this;
 
-        //store cypher return in JSON
-        vm.neo4jReturn = [];
         vm.primerDesignerReturn = [];
 
         // Our event handlers
-        vm.checkCypherLog = checkCypherLog;
         vm.runPrimerDesigner = runPrimerDesigner;
         vm.addManualPrimer = addManualPrimer;
         
@@ -32,72 +29,31 @@
         function activate() {
             var promises = [];
             common.activateController(promises, controllerId)
-                .then(function (){
-                });
+                .then(function (){});
         }
 
-        function checkCypherLog(){
-            
-            //check result
-            if (vm.neo4jReturn["error"] != null){
-
-                var error = vm.neo4jReturn["error"];
-                var innerError = error["innerError"];
-                var errorMessage = innerError["message"];
-
-                logError(errorMessage);
-                logError("Operation unsucessful");
-
-            } else {
-
-                var responseData = vm.neo4jReturn[responseData];
-                
-                for (var r in responseData){
-                    log(r + ":" + responseData[r]);
-                }
-
-                log("Operation successful");
-            }
-
-        }
-
-        ///auto new deigner primer
+        ///auto new designer primer
         function runPrimerDesigner(){
 
-            //check and extract target region
-            if (vm.newAutoRegionOfInterest == undefined || vm.newAutoRegionOfInterest == ""){
-                logError('Enter a target region');
+            //check input is correct
+            var inputCheck = common.checkGenomicTargetForm(vm.newAutoRegionOfInterest);
+
+            if (inputCheck.error){
+                logError(inputCheck.errorMessage);
                 return;
             }
 
-            var fields = vm.newAutoRegionOfInterest.split(/:|-/);
-            var prefix = vm.newAutoRegionOfInterest.substring(0, 3);
+            //activate spinner
+            //TODO activate spinner
 
-            if (fields.length != 3){
-                logError('Target location format is chr:start-end');
-                return;
-            }
+            return datacontext.runPrimerDesigner(vm.newAutoRegionOfInterest).then(function (result) {
 
-            if (prefix.toUpperCase() == "CHR"){
-                logError('Do not use the chr prefix');
-                return;
-            }
-
-            if (parseInt(fields[1]) > parseInt(fields[2])){
-                logError('Coordinates should be ascending');
-                return;
-            }
-
-            vm.newAutoRegionOfInterest = "Running..."; //TODO activate spinner
-
-            return datacontext.runPrimerDesigner(fields[0] + "\t" + fields[1] + "\t" + fields[2]).then(function (result) {
-                
-                vm.newAutoRegionOfInterest = "Done!"; //TODO deactivate spinner
+                //deactivate spinner
+                //TODO deactivate spinner
 
                 vm.primerDesignerReturn = jQuery.parseJSON(result.data.stdout);
 
-                if (vm.primerDesignerReturn.leftSequence == null || vm.primerDesignerReturn.leftTm == null || vm.primerDesignerReturn.rightSequence == null ||
-                    vm.primerDesignerReturn.rightTm == null || vm.primerDesignerReturn.chromosome == null || vm.primerDesignerReturn.startPosition == null || vm.primerDesignerReturn.endPosition == null){
+                if (vm.primerDesignerReturn.leftSequence == null || vm.primerDesignerReturn.leftTm == null || vm.primerDesignerReturn.rightSequence == null || vm.primerDesignerReturn.rightTm == null || vm.primerDesignerReturn.chromosome == null || vm.primerDesignerReturn.startPosition == null || vm.primerDesignerReturn.endPosition == null){
                     logError("Could not designer primers around the supplied target");
                     return;
                 }
@@ -108,8 +64,15 @@
 
                 //add upstream primer and order
                 return datacontext.runAdhocQuery(query).then(function (result) {
-                    vm.neo4jReturn = result.data;
-                    checkCypherLog();
+                    var cypherReturn  = common.checkCypherLog(result.data);
+
+                    if (cypherReturn.error){
+                        logError(cypherReturn.errorMessage);
+                    } else {
+                        log("Operation Successful");
+                        if (cypherReturn.successMessage != "" && cypherReturn.successMessage != undefined) log(cypherReturn.successMessage);
+                    }
+
                 });
 
             });
@@ -119,65 +82,40 @@
         //add manual primer
         function addManualPrimer() {
 
-            var query = "MATCH (user:User {UserName:\"" + $window.sessionStorage.username + "\"}) ";
             var upstreamProvided = false, downstreamProvided = false;
+            var query = "MATCH (user:User {UserName:\"" + $window.sessionStorage.username + "\"}) ";
 
             //check upstream primer entry
             if (vm.newManualUpstreamPrimerSequence != undefined && vm.newManualUpstreamPrimerSequence != ""){
                 upstreamProvided = true;
 
-                //check upstream primer for non-IUPAC
-                for (var i = 0, len = vm.newManualUpstreamPrimerSequence.length; i < len; i++) {
+                var checkInput = common.checkDNAIsIUPAC(vm.newManualUpstreamPrimerSequence);
+                if (checkInput.error){
+                    logError("Upstream primer error: " + checkInput.errorMessage);
+                    return;
+                }
 
-                    if (vm.newManualUpstreamPrimerSequence[i] != 'A' &&
-                        vm.newManualUpstreamPrimerSequence[i] != 'T' &&
-                        vm.newManualUpstreamPrimerSequence[i] != 'G' &&
-                        vm.newManualUpstreamPrimerSequence[i] != 'C' &&
-                        vm.newManualUpstreamPrimerSequence[i] != 'U' &&
-                        vm.newManualUpstreamPrimerSequence[i] != 'R' &&
-                        vm.newManualUpstreamPrimerSequence[i] != 'Y' &&
-                        vm.newManualUpstreamPrimerSequence[i] != 'S' &&
-                        vm.newManualUpstreamPrimerSequence[i] != 'W' &&
-                        vm.newManualUpstreamPrimerSequence[i] != 'K' &&
-                        vm.newManualUpstreamPrimerSequence[i] != 'M' &&
-                        vm.newManualUpstreamPrimerSequence[i] != 'B' &&
-                        vm.newManualUpstreamPrimerSequence[i] != 'D' &&
-                        vm.newManualUpstreamPrimerSequence[i] != 'H' &&
-                        vm.newManualUpstreamPrimerSequence[i] != 'V' &&
-                        vm.newManualUpstreamPrimerSequence[i] != 'N' ){
-                            logError('Upstream primer sequence contains non-IUPAC bases');
-                            return; 
-                    }
-
+                //check Tm has been entered
+                if (vm.newManualUpstreamPrimerTm == undefined || vm.newManualUpstreamPrimerTm == ""){
+                    logError('Enter upstream primer Tm');
+                    return;
                 }
 
             }
-            //see if downstream primer was provided
+            //check downstream primer entry
             if (vm.newManualDownstreamPrimerSequence != undefined && vm.newManualDownstreamPrimerSequence != ""){
                 downstreamProvided = true;
 
-                //check primer for non-IUPAC
-                for (var i = 0, len = vm.newManualDownstreamPrimerSequence.length; i < len; i++) {
+                var checkInput = common.checkDNAIsIUPAC(vm.newManualDownstreamPrimerSequence);
+                if (checkInput.error){
+                    logError("Downstream primer error: " + checkInput.errorMessage);
+                    return;
+                }
 
-                    if (vm.newManualDownstreamPrimerSequence[i] != 'A' &&
-                        vm.newManualDownstreamPrimerSequence[i] != 'T' &&
-                        vm.newManualDownstreamPrimerSequence[i] != 'G' &&
-                        vm.newManualDownstreamPrimerSequence[i] != 'C' &&
-                        vm.newManualDownstreamPrimerSequence[i] != 'U' &&
-                        vm.newManualDownstreamPrimerSequence[i] != 'R' &&
-                        vm.newManualDownstreamPrimerSequence[i] != 'Y' &&
-                        vm.newManualDownstreamPrimerSequence[i] != 'S' &&
-                        vm.newManualDownstreamPrimerSequence[i] != 'W' &&
-                        vm.newManualDownstreamPrimerSequence[i] != 'K' &&
-                        vm.newManualDownstreamPrimerSequence[i] != 'M' &&
-                        vm.newManualDownstreamPrimerSequence[i] != 'B' &&
-                        vm.newManualDownstreamPrimerSequence[i] != 'D' &&
-                        vm.newManualDownstreamPrimerSequence[i] != 'H' &&
-                        vm.newManualDownstreamPrimerSequence[i] != 'V' &&
-                        vm.newManualDownstreamPrimerSequence[i] != 'N' ){
-                            logError('Downstream primer sequence contains non-IUPAC bases');
-                            return; 
-                    }
+                //check Tm has been entered
+                if (vm.newManualDownstreamPrimerTm == undefined || vm.newManualDownstreamPrimerTm == ""){
+                    logError('Enter downstream primer Tm');
+                    return;
                 }
             }
 
@@ -187,62 +125,52 @@
                 if (vm.newManualTargetRegion == undefined || vm.newManualTargetRegion == ""){
                     logError('Enter a target region');
                     return;
-                }
-                //check Tm has been entered
-                if (vm.newManualUpstreamPrimerTm == undefined || vm.newManualUpstreamPrimerTm == ""){
-                    logError('Enter upstream primer Tm');
-                    return;
-                }
-                //check Tm has been entered
-                if (vm.newManualDownstreamPrimerTm == undefined || vm.newManualDownstreamPrimerTm == ""){
-                    logError('Enter downstream primer Tm');
-                    return;
+                } else {
+                    var checkInput = common.checkGenomicTargetForm(vm.newManualTargetRegion);
+
+                    if (checkInput.error){
+                        logError(checkInput.errorMessage);
+                        return;
+                    }
                 }
 
                 var fields = vm.newManualTargetRegion.split(/:|-/);
-                var prefix = vm.newManualTargetRegion.substring(0, 3);
 
-                if (fields.length != 3){
-                    logError('Target location format is chr:start-end');
-                    return;
-                }
-
-                if (prefix.toUpperCase() == "CHR"){
-                    logError('Do not use the chr prefix');
-                    return;
-                }
-
-                if (parseInt(fields[1]) > parseInt(fields[2])){
-                    logError('Coordinates should be ascending');
-                    return;
-                }
-
-                query += "CREATE (primer1:Primer {PrimerSequence:\"" + vm.newManualUpstreamPrimerSequence + "\", Tm: " + vm.newManualUpstreamPrimerTm + ", Comments:\"" + vm.newManualUpstreamPrimerComments + "\", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user), ";
-                query += "(primer2:Primer {PrimerSequence:\"" + vm.newManualDownstreamPrimerSequence + "\", Tm: " + vm.newManualDownstreamPrimerTm + ", Comments:\"" + vm.newManualDownstreamPrimerComments + "\", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user), ";
+                //add primer(s)
+                query += "CREATE (primer1:Primer {PrimerSequence:\"" + vm.newManualUpstreamPrimerSequence.toUpperCase() + "\", Tm: " + vm.newManualUpstreamPrimerTm;
+                if (vm.newManualUpstreamPrimerComments != undefined && vm.newManualUpstreamPrimerComments != "") query += ", Comments:\"" + vm.newManualUpstreamPrimerComments + "\"";
+                if (vm.newManualSNPDBExcluded != undefined && vm.newManualSNPDBExcluded != "") query += ", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"";
+                query += "})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user), ";
+                query += "(primer2:Primer {PrimerSequence:\"" + vm.newManualDownstreamPrimerSequence.toUpperCase() + "\", Tm: " + vm.newManualDownstreamPrimerTm + ", Comments:\"" + vm.newManualDownstreamPrimerComments + "\", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user), ";
                 query += "(primer1)-[:HAS_DOWNSTREAM_TARGET]->(assay:Assay {Contig:\"" + fields[0] + "\", StartPos:toInt(" + fields[1] + "), EndPos:toInt(" + fields[2] + "), ReferenceGenome:\"GRCh37\"})<-[:HAS_UPSTREAM_TARGET]-(primer2), ";
                 query += "(assay)-[:DESIGNED_BY {Date:" + today.getTime() + "}]->(user);"
 
             } else if (upstreamProvided) {
-                //check Tm has been entered
-                if (vm.newManualUpstreamPrimerTm == undefined || vm.newManualUpstreamPrimerTm == ""){
-                    logError('Enter upstream primer Tm');
-                    return;
-                }
-                query += "CREATE (primer:Primer {PrimerSequence:\"" + vm.newManualUpstreamPrimerSequence + "\", Tm: " + vm.newManualUpstreamPrimerTm + ", Comments:\"" + vm.newManualUpstreamPrimerComments + "\", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"";
+
+                query += "CREATE (primer:Primer {PrimerSequence:\"" + vm.newManualUpstreamPrimerSequence.toUpperCase() + "\", Tm: " + vm.newManualUpstreamPrimerTm;
+                if (vm.newManualUpstreamPrimerComments != undefined && vm.newManualUpstreamPrimerComments != "") query += ", Comments:\"" + vm.newManualUpstreamPrimerComments + "\"";
+                if (vm.newManualSNPDBExcluded != undefined && vm.newManualSNPDBExcluded != "") query += ", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"";
                 query += "})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user);";
+
             } else if (downstreamProvided){
-                //check Tm has been entered
-                if (vm.newManualDownstreamPrimerTm == undefined || vm.newManualDownstreamPrimerTm == ""){
-                    logError('Enter downstream primer Tm');
-                    return;
-                }
-                query += "CREATE (primer:Primer {PrimerSequence:\"" + vm.newManualDownstreamPrimerSequence + "\", Tm: " + vm.newManualDownstreamPrimerTm + ", Comments:\"" + vm.newManualDownstreamPrimerComments + "\", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"";
+
+                query += "CREATE (primer:Primer {PrimerSequence:\"" + vm.newManualDownstreamPrimerSequence.toUpperCase() + "\", Tm: " + vm.newManualDownstreamPrimerTm;
+                if (vm.newManualDownstreamPrimerComments != undefined && vm.newManualDownstreamPrimerComments != "") query += ", Comments:\"" + vm.newManualDownstreamPrimerComments + "\"";
+                if (vm.newManualSNPDBExcluded != undefined && vm.newManualSNPDBExcluded != "") query += ", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"";
                 query += "})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user);";
+
             }
 
             return datacontext.runAdhocQuery(query).then(function (result) {
-                vm.neo4jReturn = result.data;
-                checkCypherLog();
+                var cypherReturn  = common.checkCypherLog(result.data);
+
+                if (cypherReturn.error){
+                    logError(cypherReturn.errorMessage);
+                } else {
+                    log("Operation Successful");
+                    if (cypherReturn.successMessage != "" && cypherReturn.successMessage != undefined) log(cypherReturn.successMessage);
+                }
+
             });
 
         }

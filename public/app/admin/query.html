@@ -111,15 +111,15 @@
                                 <table class="table table-striped" ng-repeat="node in vm.primerSequenceNodes" ng-if="$index > 0">
                                     <thead>
                                         <tr>
-                                            <th nowrap>Order</th>
-                                            <th nowrap>Info</th>
-                                            <th nowrap>Name</th>
-                                            <th nowrap>Sequence (5'-3')</th>
-                                            <th nowrap>Tm</th>
-                                            <th nowrap>Submitter</th>
-                                            <th nowrap>Entered</th>
-                                            <th nowrap>SNP excluded database(s)</th>
-                                            <th nowrap>Comments</th>
+                                            <th>Order</th>
+                                            <th>Info</th>
+                                            <th>Name</th>
+                                            <th>Sequence (5'-3')</th>
+                                            <th>Tm</th>
+                                            <th>Submitter</th>
+                                            <th>Entered</th>
+                                            <th>SNP excluded database(s)</th>
+                                            <th>Comments</th>
                                         </tr>
                                     </thead>
                                     <tbody ng-repeat="node2 in node">
@@ -145,7 +145,8 @@
                                         <td>{{ node2.primer.data.Comments }}</td>
                                     </tr>
                                     <tr ng-show="vm.primerSequenceOrderExpanded[$index]">
-                                        <td><button class="glyphicon glyphicon-shopping-cart" data-ng-click="vm.primerSequenceToBuyID = node2.primer.id;vm.orderPrimer()"></button></td>
+                                        <td></td>
+                                        <td><button class="glyphicon glyphicon-shopping-cart" data-ng-click="vm.primerSequenceToBuyID = node2.primer.id;vm.requestPrimer(); vm.newPrimerFivePrimerMod = ''; vm.newPrimerName = ''; vm.newPrimerThreePrimerMod = ''; vm.selectedScale = vm.primerUMScales[0]; vm.selectedPurification = vm.primerPurifications[0]; vm.selectedSupplier = vm.primerSuppliers[0]"></button></td>
                                         <td><input type="text" class="form-control" placeholder="5' Mod" data-ng-model="vm.newPrimerFivePrimerMod"></td>
                                         <td><input type="text" class="form-control" placeholder="Primer Name" data-ng-model="vm.newPrimerName"></td>
                                         <td><input type="text" class="form-control" placeholder="3' Mod" data-ng-model="vm.newPrimerThreePrimerMod"></td>
@@ -153,13 +154,13 @@
                                         <td>Purification: <select ng-init="vm.selectedPurification = vm.primerPurifications[0]" data-ng-model="vm.selectedPurification" data-ng-options="purification for purification in vm.primerPurifications"></select></td>
                                         <td>Supplier: <select ng-init="vm.selectedSupplier = vm.primerSuppliers[0]" data-ng-model="vm.selectedSupplier" data-ng-options="supplier for supplier in vm.primerSuppliers"></select></td>
                                     </tr>
-                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><th>Purification</th><td>{{ node2.order.data.Purification }}</td></tr>
-                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><th>Supplier</th><td>{{ node2.order.data.Supplier }}</td></tr>
-                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><th>Scale</th><td>{{ node2.order.data.Scale }}</td></tr>
-                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><th>Lot</th><td>{{ node2.order.data.LotNumber }}</td></tr>
-                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><th>Location</th><td>{{ node2.storageLocation.data.Location }}</td></tr>
-                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><th>Requester</th><td>{{ node2.requestedBy.data.UserName }}</td></tr>
-                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><th>Receiver</th><td>{{ node2.receivedBy.data.UserName }}</td></tr>
+                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><td></td><th>Purification</th><td>{{ node2.order.data.Purification }}</td></tr>
+                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><td></td><th>Supplier</th><td>{{ node2.order.data.Supplier }}</td></tr>
+                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><td></td><th>Scale</th><td>{{ node2.order.data.Scale }}</td></tr>
+                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><td></td><th>Lot</th><td>{{ node2.order.data.LotNumber }}</td></tr>
+                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><td></td><th>Location</th><td>{{ node2.storageLocation.data.Location }}</td></tr>
+                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><td></td><th>Requester</th><td>{{ node2.requestedBy.data.UserName }}</td></tr>
+                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]"><td></td><th>Receiver</th><td>{{ node2.receivedBy.data.UserName }}</td></tr>
                                     </tbody>
                                 </table>
 
