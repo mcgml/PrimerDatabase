@@ -26,6 +26,7 @@
             createNode: createNode,
             addNode: addNode,
             runPrimerDesigner: runPrimerDesigner,
+            writeIGVFiles : writeIGVFiles
         };
 
         return service;
@@ -264,6 +265,18 @@
                 method: 'POST',
                 data: { query: query },
                 url: '/api/runPrimerDesigner',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            return $q.when(call);
+        }
+
+        function writeIGVFiles(query) {
+
+            var call = $http({
+                method: 'POST',
+                data: { query: query },
+                url: '/api/writeIGVFiles',
                 headers: { 'Content-Type': 'application/json' }
             });
 

@@ -83,7 +83,7 @@
         function orderPrimers() {
 
             var query = "MATCH (user:User {UserName:\"" + $window.sessionStorage.username + "\"}) ";
-            query = "MATCH (order:AwaitingOrder)<-[:HAS_ORDER]-(primer:Primer) ";
+            query += "MATCH (order:AwaitingOrder)<-[:HAS_ORDER]-(primer:Primer) ";
             query += "CREATE (order)-[:ORDERED_BY {Date:" + today.getTime() + "}]->(user) ";
             query += "SET order:AwaitingReceipt remove order:AwaitingOrder ";
             query += "return order, primer;";

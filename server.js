@@ -19,7 +19,8 @@ var TwitterStrategy = require('passport-twitter').Strategy;
 var exec = require('child_process').exec;
 
 var users = [
-    { id: 1, username: 'ml', password: 'lyon', email: 'test@test.co.uk' }
+    { id: 1, username: 'ml', password: 'lyon', email: 'test@test.co.uk' },
+    { id: 2, username: 'boss', password: 'boss', email: 'test2@test.co.uk' }
 ];
 
 

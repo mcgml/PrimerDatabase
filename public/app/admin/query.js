@@ -65,6 +65,24 @@
 
         function loadIGV(){
 
+            var query = [];
+            var xml;
+            query.bedFilePath = $window.sessionStorage.username + ".bed";
+            query.bedFeatureForIGV;
+
+            xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>";
+            xml += "<Session genome=\"b37\" hasGeneTrack=\"true\" hasSequenceTrack=\"true\" locus=" + vm.targetRegion + " version=\"8\">";
+            xml += "    <Resources>";
+            xml += "        <Resource path=" + query.bedFilePath + "/>";
+            xml += "    </Resources>";
+            xml += "    <Panel height=\"550\" name=\"FeaturePanel\" width=\"1263\">";
+            xml += "        <Track displayMode=\"EXPANDED\" id=" + query.bedFilePath + " name=" + query.bedFilePath + "/>";
+            xml += "    </Panel>";
+            xml += "</Session>";
+
+            return datacontext.writeIGVFiles(query).then(function (result) {
+
+            });
         }
 
         function requestPrimer(){

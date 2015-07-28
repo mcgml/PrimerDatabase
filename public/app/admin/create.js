@@ -139,9 +139,14 @@
                 //add primer(s)
                 query += "CREATE (primer1:Primer {PrimerSequence:\"" + vm.newManualUpstreamPrimerSequence.toUpperCase() + "\", Tm: " + vm.newManualUpstreamPrimerTm;
                 if (vm.newManualUpstreamPrimerComments != undefined && vm.newManualUpstreamPrimerComments != "") query += ", Comments:\"" + vm.newManualUpstreamPrimerComments + "\"";
-                if (vm.newManualSNPDBExcluded != undefined && vm.newManualSNPDBExcluded != "") query += ", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"";
+                //if (vm.newManualSNPDBExcluded != undefined && vm.newManualSNPDBExcluded != "") query += ", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"";
                 query += "})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user), ";
-                query += "(primer2:Primer {PrimerSequence:\"" + vm.newManualDownstreamPrimerSequence.toUpperCase() + "\", Tm: " + vm.newManualDownstreamPrimerTm + ", Comments:\"" + vm.newManualDownstreamPrimerComments + "\", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user), ";
+
+                query += "(primer2:Primer {PrimerSequence:\"" + vm.newManualDownstreamPrimerSequence.toUpperCase() + "\", Tm: " + vm.newManualDownstreamPrimerTm;
+                if (vm.newManualDownstreamPrimerComments != undefined && vm.newManualDownstreamPrimerComments != "") query += ", Comments:\"" + vm.newManualDownstreamPrimerComments + "\"";
+                //if (vm.newManualSNPDBExcluded != undefined && vm.newManualSNPDBExcluded != "") query += ", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"";
+                query += "})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user), ";
+
                 query += "(primer1)-[:HAS_DOWNSTREAM_TARGET]->(assay:Assay {Contig:\"" + fields[0] + "\", StartPos:toInt(" + fields[1] + "), EndPos:toInt(" + fields[2] + "), ReferenceGenome:\"GRCh37\"})<-[:HAS_UPSTREAM_TARGET]-(primer2), ";
                 query += "(assay)-[:DESIGNED_BY {Date:" + today.getTime() + "}]->(user);"
 
@@ -149,14 +154,14 @@
 
                 query += "CREATE (primer:Primer {PrimerSequence:\"" + vm.newManualUpstreamPrimerSequence.toUpperCase() + "\", Tm: " + vm.newManualUpstreamPrimerTm;
                 if (vm.newManualUpstreamPrimerComments != undefined && vm.newManualUpstreamPrimerComments != "") query += ", Comments:\"" + vm.newManualUpstreamPrimerComments + "\"";
-                if (vm.newManualSNPDBExcluded != undefined && vm.newManualSNPDBExcluded != "") query += ", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"";
+                //if (vm.newManualSNPDBExcluded != undefined && vm.newManualSNPDBExcluded != "") query += ", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"";
                 query += "})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user);";
 
             } else if (downstreamProvided){
 
                 query += "CREATE (primer:Primer {PrimerSequence:\"" + vm.newManualDownstreamPrimerSequence.toUpperCase() + "\", Tm: " + vm.newManualDownstreamPrimerTm;
                 if (vm.newManualDownstreamPrimerComments != undefined && vm.newManualDownstreamPrimerComments != "") query += ", Comments:\"" + vm.newManualDownstreamPrimerComments + "\"";
-                if (vm.newManualSNPDBExcluded != undefined && vm.newManualSNPDBExcluded != "") query += ", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"";
+                //if (vm.newManualSNPDBExcluded != undefined && vm.newManualSNPDBExcluded != "") query += ", SNPDB:\"" + vm.newManualSNPDBExcluded + "\"";
                 query += "})-[:ENTERED_BY {Date:" + today.getTime() + "}]->(user);";
 
             }
