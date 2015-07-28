@@ -65,24 +65,34 @@
 
         function loadIGV(){
 
-            var query = [];
-            var xml;
-            query.bedFilePath = $window.sessionStorage.username + ".bed";
-            query.bedFeatureForIGV;
+            var bedFilePath = "/Users/ml/Documents/Projects/PrimerDesigner/Mo/Mo.bed";
+            var locus = "14:102467141-102468527";
 
-            xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>";
-            xml += "<Session genome=\"b37\" hasGeneTrack=\"true\" hasSequenceTrack=\"true\" locus=" + vm.targetRegion + " version=\"8\">";
-            xml += "    <Resources>";
-            xml += "        <Resource path=" + query.bedFilePath + "/>";
+            var xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n";
+            xml += "<Session genome=\"b37_gatk_2.8\" hasGeneTrack=\"true\" hasSequenceTrack=\"true\" locus=\"" + locus + "\" version=\"8\">\n";
+            xml += "    <Resources>\n";
+            xml += "        <Resource path=\"" + bedFilePath + "\"/>\n";
             xml += "    </Resources>";
-            xml += "    <Panel height=\"550\" name=\"FeaturePanel\" width=\"1263\">";
-            xml += "        <Track displayMode=\"EXPANDED\" id=" + query.bedFilePath + " name=" + query.bedFilePath + "/>";
-            xml += "    </Panel>";
-            xml += "</Session>";
+            xml += "    <Panel height=\"1190\" name=\"FeaturePanel\" width=\"2543\">";
+            xml += "        <Track altColor=\"0,0,178\" autoScale=\"false\" color=\"0,0,178\" displayMode=\"COLLAPSED\" featureVisibilityWindow=\"-1\" fontSize=\"10\" id=\"Reference sequence\" name=\"Reference sequence\" sortable=\"false\" visible=\"true\"/>";
+            xml += "        <Track altColor=\"0,0,178\" autoScale=\"false\" clazz=\"org.broad.igv.track.FeatureTrack\" color=\"0,0,178\" colorScale=\"ContinuousColorScale;0.0;1015.0;255,255,255;0,0,178\" displayMode=\"COLLAPSED\" featureVisibilityWindow=\"-1\" fontSize=\"10\" height=\"35\" id=\"b37_gatk_2.8_genes\" name=\"Gene\" renderer=\"BASIC_FEATURE\" sortable=\"false\" visible=\"true\" windowFunction=\"count\">\n";
+            xml += "            <DataRange baseline=\"0.0\" drawBaseline=\"true\" flipAxis=\"false\" maximum=\"1015.0\" minimum=\"0.0\" type=\"LINEAR\"/>/n";
+            xml += "        </Track>\n";
+            xml += "        <Track altColor=\"0,0,178\" autoScale=\"false\" clazz=\"org.broad.igv.track.FeatureTrack\" color=\"0,0,178\" displayMode=\"EXPANDED\" featureVisibilityWindow=\"-1\" fontSize=\"10\" id=\"/Users/ml/Documents/Projects/PrimerDesigner/Mo/Primers.bed\" name=\"Primers.bed\" renderer=\"BASIC_FEATURE\" sortable=\"false\" visible=\"true\" windowFunction=\"count\"/>\n";
+            xml += "    </Panel>\n";
+            xml += "    <PanelLayout dividerFractions=\"0.004995836802664446\"/>\n";
+            xml += "    <HiddenAttributes>\n";
+            xml += "        <Attribute name=\"DATA FILE\"/>\n";
+            xml += "        <Attribute name=\"DATA TYPE\"/>\n";
+            xml += "        <Attribute name=\"NAME\"/>\n";
+            xml += "    </HiddenAttributes>\n";
+            xml += "</Session>\n";
 
-            return datacontext.writeIGVFiles(query).then(function (result) {
-
+            var blob = new Blob([xml], {
+                type: "text/plain;charset=utf-8;",
             });
+            saveAs(blob, "igv_session.xml");
+
         }
 
         function requestPrimer(){

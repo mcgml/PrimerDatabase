@@ -376,27 +376,6 @@ exports.getAllNodes = function(req, res) {
         });
 
     };
-    exports.writeIGVFiles = function (req, res) {
-
-        //write input to BED for auomated analysis
-        fs.writeFile(req.body.query.bedFilePath, req.body.query.bedFeatureForIGV, function(err) {
-
-            if(err) {
-                 return console.log(err);
-            }
-
-         });
-
-        //write input to BED for auomated analysis
-        fs.writeFile(req.body.query.xmlFilePath, req.body.query.xmlForIGV, function(err) {
-
-            if(err) {
-                return console.log(err);
-            }
-
-        });
-
-     };
 
 
 
