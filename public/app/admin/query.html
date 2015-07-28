@@ -61,6 +61,7 @@
                                             <td>{{ node2.assay.data.ReferenceGenome }}</td>
                                             <tr ng-show="vm.assayInfoExpanded[$index]">
                                                 <th></th>
+                                                <th>Designer</th>
                                                 <th>Checked</th>
                                                 <th>Upstream Primer Comments</th>
                                                 <th>Downstream Primer Comments</th>
@@ -69,8 +70,9 @@
                                             </tr>
                                             <tr ng-show="vm.assayInfoExpanded[$index]">
                                                 <td></td>
+                                                <td>{{node2.designerUser.data.UserName}}</td>
                                                 <td ng-show="node2.user.data.UserName != null">{{ node2.user.data.UserName }} <mydate>{{ node2.checker.data.Date | date:'dd-MM-yy' }}</mydate></td>
-                                                <td ng-show="node2.user.data.UserName == null"><button ng-click="vm.checkedAssayNodeId = node2.assay.id; vm.addCheckedBy()"><i class="glyphicon glyphicon-thumbs-up"></i></button></td>
+                                                <td ng-show="node2.user.data.UserName == null"><button ng-click="vm.checkedAssayNodeId = node2.assay.id; vm.checkedAssayDesignedBy = node2.designerUser.data.UserName; vm.addCheckedBy()"><i class="glyphicon glyphicon-thumbs-up"></i></button></td>
                                                 <td ng-show="node2.primer1.data.Comments != null">{{node2.primer1.data.Comments}}</td>
                                                 <td ng-show="node2.primer2.data.Comments != null">{{node2.primer2.data.Comments}}</td>
                                                 <td ng-show="node2.primer1.data.SNPDB != null">{{node2.primer1.data.SNPDB}}</td>

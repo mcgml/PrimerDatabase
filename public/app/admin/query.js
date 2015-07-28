@@ -25,6 +25,7 @@
         vm.bedFeatureForIGV = [];
         vm.primerSequenceToBuyID = [];
         vm.bedFilePath = [];
+        vm.checkedAssayDesignedBy = [];
 
         vm.addCheckedBy = addCheckedBy;
         vm.addReceivedBy = addReceivedBy;
@@ -45,10 +46,8 @@
         //todo retired
         //todo archived
         //todo snp check record?
-        //todo mgbtamra
-        //todo email to supplier
         //todo primer name query
-        //todo cannot check own assays
+        //todo email to supplier
 
         function activate() {
             var promises = [];
@@ -57,6 +56,11 @@
         }
 
         function addCheckedBy(){
+
+            if(vm.checkedAssayDesignedBy == $window.sessionStorage.username){
+                logError("Assays cannot be checked by the designer");
+                return;
+            }
 
             var query = "MATCH (user:User {UserName:\"" + $window.sessionStorage.username + "\"}) ";
             query += "MATCH (assay:Assay) where id(assay) = " + vm.checkedAssayNodeId + " ";
@@ -209,7 +213,9 @@
             var fields = vm.targetRegion.split(/:|-/);
 
             var query = "MATCH (primer1:Primer)-[:HAS_DOWNSTREAM_TARGET]->(assay:Assay)<-[:HAS_UPSTREAM_TARGET]-(primer2:Primer) where assay.Contig = \"" + fields[0] + "\" AND assay.StartPos <= toInt(" + fields[1] + ") AND assay.EndPos >= toInt(" + fields[2] + ") ";
-            query += "OPTIONAL MATCH (assay)-[checker:CHECKED_BY]->(user:User) return primer1, assay, primer2, checker, user;";
+            query += "OPTIONAL MATCH (assay)-[designedBy:DESIGNED_BY]->(designerUser:User) ";
+            query += "OPTIONAL MATCH (assay)-[checker:CHECKED_BY]->(user:User) ";
+            query += "return primer1, assay, primer2, checker, user, designedBy, designerUser;";
 
             return datacontext.runAdhocQuery(query).then(function (result) {
 
