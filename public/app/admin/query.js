@@ -20,21 +20,35 @@
         vm.primerSequenceInfoExpanded = [];
         vm.primerSequenceOrderExpanded = [];
         vm.checkedAssayNodeId = [];
+        vm.receivedOrderNodeId = [];
+        vm.storedOrderNodeId = [];
         vm.bedFeatureForIGV = [];
         vm.primerSequenceToBuyID = [];
+        vm.bedFilePath = [];
 
         vm.addCheckedBy = addCheckedBy;
+        vm.addReceivedBy = addReceivedBy;
         vm.runPrimerNameQuery = runPrimerNameQuery;
         vm.runPrimerSequenceQuery = runPrimerSequenceQuery;
         vm.runTargetRegionQuery = runTargetRegionQuery;
-        vm.loadIGV = loadIGV;
+        vm.downloadBEDFile = downloadBEDFile;
         vm.requestPrimer = requestPrimer;
+        vm.launchIGV = launchIGV;
         vm.primerPurifications = [ "DESALT", "RP1", "HPLC", "PAGE" ];
         vm.primerUMScales = [0.025, 0.05, 0.2, 1, 10 , 15];
         vm.primerM13Tag = [];
         vm.primerSuppliers = ["Sigma"];
 
         activate();
+
+        //TODO add M13 tags
+        //todo retired
+        //todo archived
+        //todo snp check record?
+        //todo mgbtamra
+        //todo email to supplier
+        //todo primer name query
+        //todo cannot check own assays
 
         function activate() {
             var promises = [];
@@ -59,26 +73,67 @@
                 }
 
                 runTargetRegionQuery(); //update checked by field
+
             });
 
         }
 
-        function loadIGV(){
+        function addReceivedBy(){
 
-            var bedFilePath = "/Users/ml/Documents/Projects/PrimerDesigner/Mo/Mo.bed";
-            var locus = "14:102467141-102468527";
+            if (vm.lotNumber == undefined || vm.lotNumber == ""){
+                logError("Enter primer Lot Number");
+                return;
+            }
 
-            var xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n";
-            xml += "<Session genome=\"b37_gatk_2.8\" hasGeneTrack=\"true\" hasSequenceTrack=\"true\" locus=\"" + locus + "\" version=\"8\">\n";
+            if (vm.storageLocation == undefined || vm.storageLocation == ""){
+                logError("Enter primer storage location");
+                return;
+            }
+
+            if (vm.receivedOrderNodeId == undefined || vm.receivedOrderNodeId == ""){
+                logError("You must order the primer before you can receive it");
+                return;
+            }
+
+            var query = "MATCH (user:User {UserName:\"" + $window.sessionStorage.username + "\"}) ";
+            query += "MATCH (order:AwaitingReceipt) where id(order) = " + vm.receivedOrderNodeId + " ";
+            query += "CREATE (user)<-[:RECEIVED_BY {Date:" + today.getTime() + "}]-(order) ";
+            query += "CREATE (order)-[:HAS_LOCATION]->(location:StorageLocation {Location:\"" + vm.storageLocation + "\"}) ";
+            query += "REMOVE order:AwaitingReceipt ";
+            query += "SET order.LotNumber = \"" + vm.lotNumber + "\"";
+
+            return datacontext.runAdhocQuery(query).then(function (result) {
+                var cypherReturn = common.checkCypherLog(result.data);
+
+                if (cypherReturn.error){
+                    logError(cypherReturn.errorMessage);
+                } else {
+                    log("Operation Successful");
+                    if (cypherReturn.successMessage != "" && cypherReturn.successMessage != undefined) log(cypherReturn.successMessage);
+                }
+
+                vm.lotNumber = '';
+                vm.storageLocation = '';
+                vm.receivedOrderNodeId = '';
+                runPrimerSequenceQuery(); //update fields
+
+            });
+
+        }
+
+        function downloadBEDFile(){
+
+            /*var xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n";
+            xml += "<Session genome=\"b37_gatk_2.8\" hasGeneTrack=\"true\" hasSequenceTrack=\"true\" locus=\"" + vm.targetRegion + "\" version=\"8\">\n";
             xml += "    <Resources>\n";
-            xml += "        <Resource path=\"" + bedFilePath + "\"/>\n";
-            xml += "    </Resources>";
-            xml += "    <Panel height=\"1190\" name=\"FeaturePanel\" width=\"2543\">";
-            xml += "        <Track altColor=\"0,0,178\" autoScale=\"false\" color=\"0,0,178\" displayMode=\"COLLAPSED\" featureVisibilityWindow=\"-1\" fontSize=\"10\" id=\"Reference sequence\" name=\"Reference sequence\" sortable=\"false\" visible=\"true\"/>";
+            xml += "        <Resource path=\"" + "igv_session.bed" + "\"/>\n";
+            xml += "    </Resources>\n";
+            xml += "    <Panel height=\"1190\" name=\"FeaturePanel\" width=\"2543\">\n";
+            xml += "        <Track altColor=\"0,0,178\" autoScale=\"false\" color=\"0,0,178\" displayMode=\"COLLAPSED\" featureVisibilityWindow=\"-1\" fontSize=\"10\" id=\"Reference sequence\" name=\"Reference sequence\" sortable=\"false\" visible=\"true\"/>\n";
             xml += "        <Track altColor=\"0,0,178\" autoScale=\"false\" clazz=\"org.broad.igv.track.FeatureTrack\" color=\"0,0,178\" colorScale=\"ContinuousColorScale;0.0;1015.0;255,255,255;0,0,178\" displayMode=\"COLLAPSED\" featureVisibilityWindow=\"-1\" fontSize=\"10\" height=\"35\" id=\"b37_gatk_2.8_genes\" name=\"Gene\" renderer=\"BASIC_FEATURE\" sortable=\"false\" visible=\"true\" windowFunction=\"count\">\n";
-            xml += "            <DataRange baseline=\"0.0\" drawBaseline=\"true\" flipAxis=\"false\" maximum=\"1015.0\" minimum=\"0.0\" type=\"LINEAR\"/>/n";
+            xml += "            <DataRange baseline=\"0.0\" drawBaseline=\"true\" flipAxis=\"false\" maximum=\"1015.0\" minimum=\"0.0\" type=\"LINEAR\"/>\n";
             xml += "        </Track>\n";
-            xml += "        <Track altColor=\"0,0,178\" autoScale=\"false\" clazz=\"org.broad.igv.track.FeatureTrack\" color=\"0,0,178\" displayMode=\"EXPANDED\" featureVisibilityWindow=\"-1\" fontSize=\"10\" id=\"/Users/ml/Documents/Projects/PrimerDesigner/Mo/Primers.bed\" name=\"Primers.bed\" renderer=\"BASIC_FEATURE\" sortable=\"false\" visible=\"true\" windowFunction=\"count\"/>\n";
+            xml += "        <Track altColor=\"0,0,178\" autoScale=\"false\" clazz=\"org.broad.igv.track.FeatureTrack\" color=\"0,0,178\" displayMode=\"EXPANDED\" featureVisibilityWindow=\"-1\" fontSize=\"10\" id=\"" + "igv_session.bed" + "\" name=\"" + "igv_session.bed" + "\" renderer=\"BASIC_FEATURE\" sortable=\"false\" visible=\"true\" windowFunction=\"count\"/>\n";
             xml += "    </Panel>\n";
             xml += "    <PanelLayout dividerFractions=\"0.004995836802664446\"/>\n";
             xml += "    <HiddenAttributes>\n";
@@ -88,11 +143,29 @@
             xml += "    </HiddenAttributes>\n";
             xml += "</Session>\n";
 
-            var blob = new Blob([xml], {
-                type: "text/plain;charset=utf-8;",
-            });
-            saveAs(blob, "igv_session.xml");
+            //write xml
+            var blob = new Blob([xml]);
+            saveAs(blob, "igv_session.xml");*/
 
+            var today = new Date();
+            var now = today.getTime();
+
+            //create bedrecord
+            vm.bedFilePath = now + ".bed";
+            var bed = vm.bedFeatureForIGV.Contig + "\t" + (vm.bedFeatureForIGV.StartPos - vm.bedFeatureForIGV.primer1.length) + "\t" + (vm.bedFeatureForIGV.EndPos + vm.bedFeatureForIGV.primer2.length) + "\tamplicon\t0\t+\t" + vm.bedFeatureForIGV.StartPos + "\t" + vm.bedFeatureForIGV.EndPos + "\n";
+
+            //write bed file
+            var blob = new Blob([bed]);
+            saveAs(blob, vm.bedFilePath);
+
+            //load IGV
+            setTimeout(function () {launchIGV()}, 100);
+
+        }
+
+        function launchIGV(){
+            var myWindow = window.open("http://localhost:60151/load?file=/Users/ml/Downloads/" + vm.bedFilePath + "&locus=" + vm.targetRegion + "&genome=b37");
+            myWindow.close();
         }
 
         function requestPrimer(){
@@ -167,7 +240,7 @@
             query += "OPTIONAL MATCH (primer)-[enteredBy:ENTERED_BY]->(enterUser:User) ";
             query += "OPTIONAL MATCH (order)-[requestedBy:REQUESTED_BY]->(requesterUser:User) ";
             query += "OPTIONAL MATCH (order)-[receivedBy:RECEIVED_BY]->(receiveUser:User) ";
-            query += "return primer, enteredBy, enterUser, receiveUser, requestedBy, requesterUser, order;";
+            query += "return primer, enteredBy, enterUser, receiveUser, receivedBy, requestedBy, requesterUser, order, storageLocation;";
 
             return datacontext.runAdhocQuery(query).then(function (result) {
 
