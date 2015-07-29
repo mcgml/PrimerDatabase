@@ -10,6 +10,8 @@
         var log = getLogFn(controllerId);
         var logError = getLogFn(controllerId, 'error');
         var today = new Date();
+        var M13F = "ACGATCAGCTA";
+        var M13R = "TGTGTGTCTTG";
 
         var vm = this;
 
@@ -37,12 +39,11 @@
         vm.launchIGV = launchIGV;
         vm.primerPurifications = [ "DESALT", "RP1", "HPLC", "PAGE" ];
         vm.primerUMScales = [0.025, 0.05, 0.2, 1, 10 , 15];
-        vm.primerM13Tag = [];
+        vm.primerM13Tag = ["None", "M13F", "M13R"];
         vm.primerSuppliers = ["Sigma"];
 
         activate();
 
-        //TODO add M13 tags
         //todo retired
         //todo archived
         //todo snp check record?
@@ -181,7 +182,10 @@
 
             var query = "MATCH (user:User {UserName:\"" + $window.sessionStorage.username + "\"}) ";
             query += "MATCH (primer:Primer) where id(primer) = " + vm.primerSequenceToBuyID + " ";
-            query += "CREATE (primer)-[:HAS_ORDER]->(order:Order :AwaitingOrder {PrimerName:\"" + vm.newPrimerName + "\"";
+            query += "CREATE (primer)-[:HAS_ORDER]->(order:Order :AwaitingOrder ";
+            if (vm.selectedM13 == "M13F") query += ":M13F ";
+            if (vm.selectedM13 == "M13R") query += ":M13R ";
+            query += "{PrimerName:\"" + vm.newPrimerName + "\"";
             if (vm.newPrimerFivePrimerMod != "" && vm.newPrimerFivePrimerMod != undefined) query += ", FivePrimeModification:\"" + vm.newPrimerFivePrimerMod + "\"";
             if (vm.newPrimerThreePrimerMod != "" && vm.newPrimerThreePrimerMod != undefined) query += ", ThreePrimerModification:\"" + vm.newPrimerThreePrimerMod + "\"";
             query += ", Purification:\"" + vm.selectedPurification + "\", Scale:" + vm.selectedScale + ", Supplier:\"" + vm.selectedSupplier + "\"}) ";
@@ -241,12 +245,14 @@
 
             var query = "MATCH (primer:Primer {PrimerSequence:\"" + vm.primerSequence + "\"}) ";
             query += "OPTIONAL MATCH (primer)-[:HAS_ORDER]->(order:Order) ";
+            query += "OPTIONAL MATCH (primer)-[:HAS_ORDER]->(m13f:M13F) ";
+            query += "OPTIONAL MATCH (primer)-[:HAS_ORDER]->(m13r:M13R) ";
             query += "OPTIONAL MATCH (primer)-[:HAS_UPSTREAM_TARGET|:HAS_DOWNSTREAM_TARGET]->(assay:Assay) ";
             query += "OPTIONAL MATCH (order)-[:HAS_LOCATION]->(storageLocation:StorageLocation) ";
             query += "OPTIONAL MATCH (primer)-[enteredBy:ENTERED_BY]->(enterUser:User) ";
             query += "OPTIONAL MATCH (order)-[requestedBy:REQUESTED_BY]->(requesterUser:User) ";
             query += "OPTIONAL MATCH (order)-[receivedBy:RECEIVED_BY]->(receiveUser:User) ";
-            query += "return primer, enteredBy, enterUser, receiveUser, receivedBy, requestedBy, requesterUser, order, storageLocation;";
+            query += "return primer, enteredBy, enterUser, receiveUser, receivedBy, requestedBy, requesterUser, order, storageLocation, m13f, m13r;";
 
             return datacontext.runAdhocQuery(query).then(function (result) {
 
