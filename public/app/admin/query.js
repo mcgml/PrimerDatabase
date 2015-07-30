@@ -44,6 +44,7 @@
 
         activate();
 
+        //todo fix M13 bug
         //todo retired
         //todo archived
         //todo snp check record?
