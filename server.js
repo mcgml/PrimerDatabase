@@ -24,7 +24,7 @@ var users = [
 ];
 
 
-function findById(id, fn) {§
+function findById(id, fn) {
     var idx = id - 1;
     if (users[idx]) {
         fn(null, users[idx]);

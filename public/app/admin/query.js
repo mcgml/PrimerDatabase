@@ -170,7 +170,7 @@
         }
 
         function launchIGV(){
-            var myWindow = window.open("http://localhost:60151/load?file=/Users/ml/Downloads/" + vm.bedFilePath + "&locus=" + vm.targetRegion + "&genome=b37");
+            var myWindow = window.open("http://localhost:60151/load?file=/Users/ml/Downloads/" + vm.bedFilePath + "&locus=" + vm.targetRegion + "&genome=GRCh37.75");
             myWindow.close();
         }
 
@@ -253,7 +253,9 @@
             query += "OPTIONAL MATCH (primer)-[enteredBy:ENTERED_BY]->(enterUser:User) ";
             query += "OPTIONAL MATCH (order)-[requestedBy:REQUESTED_BY]->(requesterUser:User) ";
             query += "OPTIONAL MATCH (order)-[receivedBy:RECEIVED_BY]->(receiveUser:User) ";
-            query += "return primer, enteredBy, enterUser, receiveUser, receivedBy, requestedBy, requesterUser, order, storageLocation, m13f, m13r;";
+            query += "OPTIONAL MATCH (primer)-[archivedBy:ARCHIVED_BY]->(archiveUser:User) ";
+            query += "OPTIONAL MATCH (primer)-[retiredBy:RETIRED_BY]->(retireUser:User) ";
+            query += "return primer, enteredBy, enterUser, receiveUser, receivedBy, requestedBy, requesterUser, order, storageLocation, m13f, m13r, archivedBy, archiveUser, retiredBy, retireUser;";
 
             return datacontext.runAdhocQuery(query).then(function (result) {
 
