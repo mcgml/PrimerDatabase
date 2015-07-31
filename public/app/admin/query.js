@@ -19,8 +19,10 @@
         vm.primerSequenceNodes = [];
         vm.regionofInterestNodes = [];
         vm.assayInfoExpanded = [];
-        vm.primerSequenceInfoExpanded = [];
-        vm.primerSequenceOrderExpanded = [];
+        vm.primerSequenceInfoExpanded1 = [];
+        vm.primerSequenceOrderExpanded1 = [];
+        vm.primerSequenceInfoExpanded2 = [];
+        vm.primerSequenceOrderExpanded2 = [];
         vm.checkedAssayNodeId = [];
         vm.receivedOrderNodeId = [];
         vm.storedOrderNodeId = [];
@@ -101,6 +103,7 @@
                 return;
             }
 
+            //receive primer
             var query = "MATCH (user:User {UserName:\"" + $window.sessionStorage.username + "\"}) ";
             query += "MATCH (order:AwaitingReceipt) where id(order) = " + vm.receivedOrderNodeId + " ";
             query += "CREATE (user)<-[:RECEIVED_BY {Date:" + today.getTime() + "}]-(order) ";
@@ -121,7 +124,6 @@
                 vm.lotNumber = '';
                 vm.storageLocation = '';
                 vm.receivedOrderNodeId = '';
-                runPrimerSequenceQuery(); //update fields
 
             });
 
@@ -238,7 +240,7 @@
         }
 
         function runPrimerSequenceQuery() {
-            
+
             if (vm.primerSequence == undefined || vm.primerSequence == ""){
                 logError('Enter a primer sequence');
                 return;
@@ -276,17 +278,22 @@
         function runPrimerNameQuery() {
 
             if (vm.primerName == undefined || vm.primerName == ""){
-                logError('Enter a primer sequence');
+                logError('Enter a primer name');
                 return;
             }
 
-            var query = "MATCH (order:Order {PrimerName:\"" + vm.primerName + "\"})-[:HAS_ORDER]->(primer:Primer) ";
+            var query = "MATCH (order:Order {PrimerName:\"" + vm.primerName + "\"}) ";
+            query += "OPTIONAL MATCH (primer)-[:HAS_ORDER]->(order:Order) ";
+            query += "OPTIONAL MATCH (primer)-[:HAS_ORDER]->(m13f:M13F) ";
+            query += "OPTIONAL MATCH (primer)-[:HAS_ORDER]->(m13r:M13R) ";
             query += "OPTIONAL MATCH (primer)-[:HAS_UPSTREAM_TARGET|:HAS_DOWNSTREAM_TARGET]->(assay:Assay) ";
             query += "OPTIONAL MATCH (order)-[:HAS_LOCATION]->(storageLocation:StorageLocation) ";
             query += "OPTIONAL MATCH (primer)-[enteredBy:ENTERED_BY]->(enterUser:User) ";
             query += "OPTIONAL MATCH (order)-[requestedBy:REQUESTED_BY]->(requesterUser:User) ";
             query += "OPTIONAL MATCH (order)-[receivedBy:RECEIVED_BY]->(receiveUser:User) ";
-            query += "return primer, enteredBy, enterUser, receiveUser, requestedBy, requesterUser, order;";
+            query += "OPTIONAL MATCH (primer)-[archivedBy:ARCHIVED_BY]->(archiveUser:User) ";
+            query += "OPTIONAL MATCH (primer)-[retiredBy:RETIRED_BY]->(retireUser:User) ";
+            query += "return primer, enteredBy, enterUser, receiveUser, receivedBy, requestedBy, requesterUser, order, storageLocation, m13f, m13r, archivedBy, archiveUser, retiredBy, retireUser;";
 
             return datacontext.runAdhocQuery(query).then(function (result) {
 
@@ -299,7 +306,7 @@
                     if (cypherReturn.successMessage != "" && cypherReturn.successMessage != undefined) log(cypherReturn.successMessage);
                 }
 
-                return vm.primerSequenceNodes = result.data;
+                return vm.primerNameNodes = result.data;
             });
 
         }

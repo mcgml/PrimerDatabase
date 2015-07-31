@@ -91,9 +91,9 @@
                 <div class="widget wblue">
                     <div data-cc-widget-header title="Primer Sequence" allow-collapse="true"></div>
                     <div class="widget-content">
-                        <div class="row">
 
-                            <div class="col-md-4">
+                        <div class="row">
+                            <div class="col-md-12">
                                 <form class="form-horizontal" role="form">
                                     <div class="form-group">
                                         <input type="text" class="form-control" placeholder="Enter Primer Sequence" data-ng-model="vm.primerSequence">
@@ -104,110 +104,111 @@
                                     </div>
                                 </form>
                             </div>
-
                         </div>
 
                         <div class="row">
                             <div class="col-md-12">
-
                                 <table class="table table-striped" ng-repeat="node in vm.primerSequenceNodes" ng-if="$index > 0">
                                     <thead>
-                                        <tr>
-                                            <th>Order</th>
-                                            <th>Info</th>
-                                            <th>Tm</th>
-                                            <th>Name</th>
-                                            <th colspan="2">Sequence (5'-3')</th>
-                                            <th colspan="2">Comments</th>
-                                        </tr>
+                                    <tr>
+                                        <th class="col-md-1">Order</th>
+                                        <th class="col-md-1">Info</th>
+                                        <th class="col-md-1">Tm</th>
+                                        <th class="col-md-3" colspan="3">Name</th>
+                                        <th class="col-md-3" colspan="3">Sequence (5'-3')</th>
+                                        <th class="col-md-3" colspan="3">Comments</th>
+                                    </tr>
                                     </thead>
                                     <tbody ng-repeat="node2 in node">
                                     <tr>
                                         <td>
-                                            <button ng-if="vm.primerSequenceOrderExpanded[$index] == undefined || !vm.primerSequenceOrderExpanded[$index]" ng-click="vm.primerSequenceOrderExpanded[$index] = true" class="glyphicon glyphicon-plus-sign"></button>
-                                            <button ng-if="vm.primerSequenceOrderExpanded[$index]" ng-click="vm.primerSequenceOrderExpanded[$index] = false" class="glyphicon glyphicon-minus-sign"></button>
+                                            <button ng-if="vm.primerSequenceOrderExpanded1[$index] == undefined || !vm.primerSequenceOrderExpanded1[$index]" ng-click="vm.primerSequenceOrderExpanded1[$index] = true" class="glyphicon glyphicon-plus-sign"></button>
+                                            <button ng-if="vm.primerSequenceOrderExpanded1[$index]" ng-click="vm.primerSequenceOrderExpanded1[$index] = false" class="glyphicon glyphicon-minus-sign"></button>
                                         </td>
                                         <td>
-                                            <button ng-if="vm.primerSequenceInfoExpanded[$index] == undefined || !vm.primerSequenceInfoExpanded[$index]" ng-click="vm.primerSequenceInfoExpanded[$index] = true" class="glyphicon glyphicon-plus-sign"></button>
-                                            <button ng-if="vm.primerSequenceInfoExpanded[$index]" ng-click="vm.primerSequenceInfoExpanded[$index] = false" class="glyphicon glyphicon-minus-sign"></button>
+                                            <button ng-if="vm.primerSequenceInfoExpanded1[$index] == undefined || !vm.primerSequenceInfoExpanded1[$index]" ng-click="vm.primerSequenceInfoExpanded1[$index] = true" class="glyphicon glyphicon-plus-sign"></button>
+                                            <button ng-if="vm.primerSequenceInfoExpanded1[$index]" ng-click="vm.primerSequenceInfoExpanded1[$index] = false" class="glyphicon glyphicon-minus-sign"></button>
                                         </td>
                                         <td>{{ node2.primer.data.Tm }}</td>
-                                        <td>{{ node2.order.data.PrimerName }}</td>
-                                        <td colspan="2">{{ node2.primer.data.PrimerSequence }}</td>
-                                        <td colspan="2">{{ node2.primer.data.Comments }}</td>
+                                        <td colspan="3">{{ node2.order.data.PrimerName }}</td>
+                                        <td colspan="3">{{ node2.primer.data.PrimerSequence }}</td>
+                                        <td colspan="3">{{ node2.primer.data.Comments }}</td>
                                     </tr>
-                                    <tr ng-show="vm.primerSequenceOrderExpanded[$index]">
-                                        <td><button class="glyphicon glyphicon-shopping-cart" data-ng-click="vm.primerSequenceToBuyID = node2.primer.id;vm.requestPrimer(); vm.newPrimerFivePrimerMod = ''; vm.newPrimerName = ''; vm.newPrimerThreePrimerMod = ''; vm.selectedScale = vm.primerUMScales[0]; vm.selectedPurification = vm.primerPurifications[0]; vm.selectedSupplier = vm.primerSuppliers[0]"></button></td>
-                                        <td><select ng-init="vm.selectedM13 = vm.primerM13Tag[0]" data-ng-model="vm.selectedM13" data-ng-options="M13 for M13 in vm.primerM13Tag"></select></td>
-                                        <td><input type="text" class="form-control" placeholder="5' Mod" data-ng-model="vm.newPrimerFivePrimerMod"></td>
-                                        <td><input type="text" class="form-control" placeholder="Primer Name" data-ng-model="vm.newPrimerName"></td>
-                                        <td><input type="text" class="form-control" placeholder="3' Mod" data-ng-model="vm.newPrimerThreePrimerMod"></td>
-                                        <td><select ng-init="vm.selectedScale = vm.primerUMScales[0]" data-ng-model="vm.selectedScale" data-ng-options="scale for scale in vm.primerUMScales"></select></td>
-                                        <td><select ng-init="vm.selectedPurification = vm.primerPurifications[0]" data-ng-model="vm.selectedPurification" data-ng-options="purification for purification in vm.primerPurifications"></select></td>
-                                        <td><select ng-init="vm.selectedSupplier = vm.primerSuppliers[0]" data-ng-model="vm.selectedSupplier" data-ng-options="supplier for supplier in vm.primerSuppliers"></select></td>
+                                    <tr ng-show="vm.primerSequenceInfoExpanded1[$index]">
+                                        <td class="col-md-1"></td>
+                                        <td class="col-md-11" colspan="11">
+                                            <table class="table">
+                                                <thead>
+                                                <tr>
+                                                    <th class="col-md-1">Designer</th>
+                                                    <th class="col-md-1">Requester</th>
+                                                    <th class="col-md-1">Supplier</th>
+                                                    <th class="col-md-1">Receiver</th>
+                                                    <th class="col-md-1">Lot Number</th>
+                                                    <th class="col-md-1">Location </th>
+                                                    <th class="col-md-1">Tag</th>
+                                                    <th class="col-md-1">Scale</th>
+                                                    <th class="col-md-1">Purification</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr>
+                                                    <td>{{ node2.enterUser.data.UserName }} <mydate>{{ node2.enteredBy.data.Date | date:'dd-MM-yy' }}</mydate></td>
+                                                    <td>{{ node2.requesterUser.data.UserName }} <mydate>{{ node2.requestedBy.data.Date | date:'dd-MM-yy' }}</mydate></td>
+                                                    <td>{{ node2.order.data.Supplier }}</td>
+                                                    <td ng-show="node2.receiveUser.data.UserName != null">{{ node2.receiveUser.data.UserName }} <mydate>{{ node2.receivedBy.data.Date | date:'dd-MM-yy' }}</mydate></td><td ng-show="node2.receiveUser.data.UserName == null"><button ng-click="vm.receivedOrderNodeId = node2.order.id; vm.addReceivedBy();">Received</button></td>
+                                                    <td ng-show="node2.order.data.LotNumber != null">{{ node2.order.data.LotNumber }}</td><td ng-show="node2.order.data.LotNumber == null"><input type="text" class="form-control" placeholder="Enter Lot Number" data-ng-model="vm.lotNumber"></td>
+                                                    <td ng-show="node2.storageLocation.data.Location != null">{{ node2.storageLocation.data.Location }}</td><td ng-show="node2.storageLocation.data.Location == null"><input type="text" class="form-control" placeholder="Enter Location" data-ng-model="vm.storageLocation"></td>
+                                                    <td ng-show="node2.m13f.data != null">M13F</td><td ng-show="node2.m13r.data != null">M13R</td><td ng-show="node2.m13r.data == null && node2.m13f.data == null"></td>
+                                                    <td>{{ node2.order.data.Scale }}</td>
+                                                    <td>{{ node2.order.data.Purification }}</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
                                     </tr>
-                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]">
-                                        <th colspan="2" >Requester</th>
-                                        <td colspan="2" >{{ node2.requesterUser.data.UserName }} <mydate>{{ node2.requestedBy.data.Date | date:'dd-MM-yy' }}</mydate></td>
-                                    </tr>
-                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]">
-                                        <th colspan="2" >Supplier</th>
-                                        <td colspan="2" >{{ node2.order.data.Supplier }}</td>
-                                    </tr>
-                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]">
-                                        <th colspan="2" >Tag</th>
-                                        <td colspan="2" ng-show="node2.m13f.data != null">M13F</td>
-                                        <td colspan="2" ng-show="node2.m13r.data != null">M13R</td>
-                                        <td colspan="2" ng-show="node2.m13r.data == null && node2.m13f.data == null"></td>
-                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]">
-                                        <th colspan="2" >Scale</th>
-                                        <td colspan="2" >{{ node2.order.data.Scale }}</td>
-                                    </tr>
-                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]">
-                                        <th colspan="2" >Purification</th>
-                                        <td colspan="2" >{{ node2.order.data.Purification }}</td>
-                                    </tr>
-                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]">
-                                        <th colspan="2" >Lot Number</th>
-                                        <td colspan="2" ng-show="node2.order.data.LotNumber != null">{{ node2.order.data.LotNumber }}</td>
-                                        <td colspan="2" ng-show="node2.order.data.LotNumber == null"><input type="text" class="form-control" placeholder="Enter Lot Number" data-ng-model="vm.lotNumber"></td>
-                                    </tr>
-                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]">
-                                        <th colspan="2">Location</th>
-                                        <td colspan="2" ng-show="node2.storageLocation.data.Location != null">{{ node2.storageLocation.data.Location }}</td>
-                                        <td colspan="2"ng-show="node2.storageLocation.data.Location == null"><input type="text" class="form-control" placeholder="Enter Location" data-ng-model="vm.storageLocation"></td>
-                                    </tr>
-                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]">
-                                        <th colspan="2">Receiver</th>
-                                        <td colspan="2" ng-show="node2.receiveUser.data.UserName != null">{{ node2.receiveUser.data.UserName }} <mydate>{{ node2.receivedBy.data.Date | date:'dd-MM-yy' }}</mydate></td>
-                                        <td colspan="2" ng-show="node2.receiveUser.data.UserName == null"><button ng-click="vm.receivedOrderNodeId = node2.order.id; vm.addReceivedBy();">Received</button></td>
-                                    </tr>
-                                    <tr ng-show="vm.primerSequenceInfoExpanded[$index]">
-                                        <th colspan="2">Submitter</th>
-                                        <td colspan="2" >{{ node2.enterUser.data.UserName }} <mydate>{{ node2.enteredBy.data.Date | date:'dd-MM-yy' }}</mydate></td>
+                                    <tr ng-show="vm.primerSequenceOrderExpanded1[$index]">
+                                        <td class="col-md-1"></td>
+                                        <td class="col-md-11" colspan="11">
+                                            <table class="table">
+                                                <tbody>
+                                                <tr ng-show="vm.primerSequenceOrderExpanded1[$index]">
+                                                    <td class="col-md-1"><button class="glyphicon glyphicon-shopping-cart" data-ng-click="vm.primerSequenceToBuyID = node2.primer.id;vm.requestPrimer(); vm.newPrimerFivePrimerMod = ''; vm.newPrimerName = ''; vm.newPrimerThreePrimerMod = ''; vm.selectedScale = vm.primerUMScales[0]; vm.selectedPurification = vm.primerPurifications[0]; vm.selectedSupplier = vm.primerSuppliers[0]"></button></td>
+                                                    <td class="col-md-1"><select ng-init="vm.selectedM13 = vm.primerM13Tag[0]" data-ng-model="vm.selectedM13" data-ng-options="M13 for M13 in vm.primerM13Tag"></select></td>
+                                                    <td class="col-md-1"><input type="text" class="form-control" placeholder="5' Mod" data-ng-model="vm.newPrimerFivePrimerMod"></td>
+                                                    <td class="col-md-2" colspan="2"><input type="text" class="form-control" placeholder="Primer Name" data-ng-model="vm.newPrimerName"></td>
+                                                    <td class="col-md-1"><input type="text" class="form-control" placeholder="3' Mod" data-ng-model="vm.newPrimerThreePrimerMod"></td>
+                                                    <td class="col-md-1"><select ng-init="vm.selectedScale = vm.primerUMScales[0]" data-ng-model="vm.selectedScale" data-ng-options="scale for scale in vm.primerUMScales"></select></td>
+                                                    <td class="col-md-1"><select ng-init="vm.selectedPurification = vm.primerPurifications[0]" data-ng-model="vm.selectedPurification" data-ng-options="purification for purification in vm.primerPurifications"></select></td>
+                                                    <td class="col-md-1"><select ng-init="vm.selectedSupplier = vm.primerSuppliers[0]" data-ng-model="vm.selectedSupplier" data-ng-options="supplier for supplier in vm.primerSuppliers"></select></td>
+                                                    <td class="col-md-1"></td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
                                     </tr>
                                     </tbody>
                                 </table>
-
                             </div>
                         </div>
+
                     </div>
                 </div>
 
-                <!-- Primer Sequence V2 search section -->
+                <!-- Primer Name search section -->
                 <div class="widget wblue">
-                    <div data-cc-widget-header title="Primer Sequence V2" allow-collapse="true"></div>
+                    <div data-cc-widget-header title="Primer Name" allow-collapse="true"></div>
                     <div class="widget-content">
 
                         <div class="row">
                             <div class="col-md-12">
                                 <form class="form-horizontal" role="form">
                                     <div class="form-group">
-                                        <input type="text" class="form-control" placeholder="Enter Primer Sequence" data-ng-model="vm.primerSequence">
+                                        <input type="text" class="form-control" placeholder="Enter Primer Name" data-ng-model="vm.primerName">
                                     </div>
                                     <div class="form-group">
-                                        <button class="btn btn-info" data-ng-click="vm.runPrimerSequenceQuery()"><i class="glyphicon glyphicon-search"></i>Search</button>
-                                        <button class="btn btn-info" data-ng-click="vm.primerSequence = ''"><i class="glyphicon glyphicon-remove-sign"></i>Clear</button>
+                                        <button class="btn btn-info" data-ng-click="vm.runPrimerNameQuery()"><i class="glyphicon glyphicon-search"></i>Search</button>
+                                        <button class="btn btn-info" data-ng-click="vm.primerName = ''"><i class="glyphicon glyphicon-remove-sign"></i>Clear</button>
                                     </div>
                                 </form>
                             </div>
@@ -215,98 +216,85 @@
 
                         <div class="row">
                             <div class="col-md-12">
-                                <table class="table table-striped" ng-repeat="node in vm.primerSequenceNodes" ng-if="$index > 0">
+                                <table class="table table-striped" ng-repeat="node in vm.primerNameNodes" ng-if="$index > 0">
                                     <thead>
-                                        <tr>
-                                            <th class="col-md-1">Order</th>
-                                            <th class="col-md-1">Info</th>
-                                            <th class="col-md-1">Tm</th>
-                                            <th class="col-md-3" colspan="3">Name</th>
-                                            <th class="col-md-3" colspan="3">Sequence (5'-3')</th>
-                                            <th class="col-md-3" colspan="3">Comments</th>
-                                        </tr>
+                                    <tr>
+                                        <th class="col-md-1">Order</th>
+                                        <th class="col-md-1">Info</th>
+                                        <th class="col-md-1">Tm</th>
+                                        <th class="col-md-3" colspan="3">Name</th>
+                                        <th class="col-md-3" colspan="3">Sequence (5'-3')</th>
+                                        <th class="col-md-3" colspan="3">Comments</th>
+                                    </tr>
                                     </thead>
                                     <tbody ng-repeat="node2 in node">
-                                        <tr>
-                                            <td>
-                                                <button ng-if="vm.primerSequenceOrderExpanded[$index] == undefined || !vm.primerSequenceOrderExpanded[$index]" ng-click="vm.primerSequenceOrderExpanded[$index] = true" class="glyphicon glyphicon-plus-sign"></button>
-                                                <button ng-if="vm.primerSequenceOrderExpanded[$index]" ng-click="vm.primerSequenceOrderExpanded[$index] = false" class="glyphicon glyphicon-minus-sign"></button>
-                                            </td>
-                                            <td>
-                                                <button ng-if="vm.primerSequenceInfoExpanded[$index] == undefined || !vm.primerSequenceInfoExpanded[$index]" ng-click="vm.primerSequenceInfoExpanded[$index] = true" class="glyphicon glyphicon-plus-sign"></button>
-                                                <button ng-if="vm.primerSequenceInfoExpanded[$index]" ng-click="vm.primerSequenceInfoExpanded[$index] = false" class="glyphicon glyphicon-minus-sign"></button>
-                                            </td>
-                                            <td>{{ node2.primer.data.Tm }}</td>
-                                            <td colspan="3">{{ node2.order.data.PrimerName }}</td>
-                                            <td colspan="3">{{ node2.primer.data.PrimerSequence }}</td>
-                                            <td colspan="3">{{ node2.primer.data.Comments }}</td>
-                                        </tr>
-                                        <tr ng-show="vm.primerSequenceInfoExpanded[$index]">
-                                            <td class="col-md-1"></td>
-                                            <td class="col-md-11" colspan="11">
-                                                <table class="table">
-                                                    <thead>
-                                                    <tr>
-                                                        <th class="col-md-1">Designer</th>
-                                                        <th class="col-md-1">Requester</th>
-                                                        <th class="col-md-1">Supplier</th>
-                                                        <th class="col-md-1">Receiver</th>
-                                                        <th class="col-md-1">Lot Number</th>
-                                                        <th class="col-md-1">Location </th>
-                                                        <th class="col-md-1">Tag</th>
-                                                        <th class="col-md-1">Scale</th>
-                                                        <th class="col-md-1">Purification</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    <tr>
-                                                        <td>{{ node2.enterUser.data.UserName }} <mydate>{{ node2.enteredBy.data.Date | date:'dd-MM-yy' }}</mydate></td>
-                                                        <td>{{ node2.requesterUser.data.UserName }} <mydate>{{ node2.requestedBy.data.Date | date:'dd-MM-yy' }}</mydate></td>
-                                                        <td>{{ node2.order.data.Supplier }}</td>
-                                                        <td ng-show="node2.receiveUser.data.UserName != null">{{ node2.receiveUser.data.UserName }} <mydate>{{ node2.receivedBy.data.Date | date:'dd-MM-yy' }}</mydate></td><td ng-show="node2.receiveUser.data.UserName == null"><button ng-click="vm.receivedOrderNodeId = node2.order.id; vm.addReceivedBy();">Received</button></td>
-                                                        <td ng-show="node2.order.data.LotNumber != null">{{ node2.order.data.LotNumber }}</td><td ng-show="node2.order.data.LotNumber == null"><input type="text" class="form-control" placeholder="Enter Lot Number" data-ng-model="vm.lotNumber"></td>
-                                                        <td ng-show="node2.storageLocation.data.Location != null">{{ node2.storageLocation.data.Location }}</td><td ng-show="node2.storageLocation.data.Location == null"><input type="text" class="form-control" placeholder="Enter Location" data-ng-model="vm.storageLocation"></td>
-                                                        <td ng-show="node2.m13f.data != null">M13F</td><td ng-show="node2.m13r.data != null">M13R</td><td ng-show="node2.m13r.data == null && node2.m13f.data == null"></td>
-                                                        <td>{{ node2.order.data.Scale }}</td>
-                                                        <td>{{ node2.order.data.Purification }}</td>
-                                                    </tr>
-                                                    </tbody>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                        <tr ng-show="vm.primerSequenceInfoExpanded[$index]">
-                                            <td class="col-md-1"></td>
-                                            <td class="col-md-11" colspan="11">
-                                                <table class="table">
-                                                    <thead>
-                                                    <tr>
-                                                        <th class="col-md-1">Designer</th>
-                                                        <th class="col-md-1">Requester</th>
-                                                        <th class="col-md-1">Supplier</th>
-                                                        <th class="col-md-1">Receiver</th>
-                                                        <th class="col-md-1">Lot Number</th>
-                                                        <th class="col-md-1">Location </th>
-                                                        <th class="col-md-1">Tag</th>
-                                                        <th class="col-md-1">Scale</th>
-                                                        <th class="col-md-1">Purification</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    <tr>
-                                                        <td>{{ node2.enterUser.data.UserName }} <mydate>{{ node2.enteredBy.data.Date | date:'dd-MM-yy' }}</mydate></td>
-                                                        <td>{{ node2.requesterUser.data.UserName }} <mydate>{{ node2.requestedBy.data.Date | date:'dd-MM-yy' }}</mydate></td>
-                                                        <td>{{ node2.order.data.Supplier }}</td>
-                                                        <td ng-show="node2.receiveUser.data.UserName != null">{{ node2.receiveUser.data.UserName }} <mydate>{{ node2.receivedBy.data.Date | date:'dd-MM-yy' }}</mydate></td><td ng-show="node2.receiveUser.data.UserName == null"><button ng-click="vm.receivedOrderNodeId = node2.order.id; vm.addReceivedBy();">Received</button></td>
-                                                        <td ng-show="node2.order.data.LotNumber != null">{{ node2.order.data.LotNumber }}</td><td ng-show="node2.order.data.LotNumber == null"><input type="text" class="form-control" placeholder="Enter Lot Number" data-ng-model="vm.lotNumber"></td>
-                                                        <td ng-show="node2.storageLocation.data.Location != null">{{ node2.storageLocation.data.Location }}</td><td ng-show="node2.storageLocation.data.Location == null"><input type="text" class="form-control" placeholder="Enter Location" data-ng-model="vm.storageLocation"></td>
-                                                        <td ng-show="node2.m13f.data != null">M13F</td><td ng-show="node2.m13r.data != null">M13R</td><td ng-show="node2.m13r.data == null && node2.m13f.data == null"></td>
-                                                        <td>{{ node2.order.data.Scale }}</td>
-                                                        <td>{{ node2.order.data.Purification }}</td>
-                                                    </tr>
-                                                    </tbody>
-                                                </table>
-                                            </td>
-                                        </tr>
+                                    <tr>
+                                        <td>
+                                            <button ng-if="vm.primerSequenceOrderExpanded2[$index] == undefined || !vm.primerSequenceOrderExpanded2[$index]" ng-click="vm.primerSequenceOrderExpanded2[$index] = true" class="glyphicon glyphicon-plus-sign"></button>
+                                            <button ng-if="vm.primerSequenceOrderExpanded2[$index]" ng-click="vm.primerSequenceOrderExpanded2[$index] = false" class="glyphicon glyphicon-minus-sign"></button>
+                                        </td>
+                                        <td>
+                                            <button ng-if="vm.primerSequenceInfoExpanded2[$index] == undefined || !vm.primerSequenceInfoExpanded2[$index]" ng-click="vm.primerSequenceInfoExpanded2[$index] = true" class="glyphicon glyphicon-plus-sign"></button>
+                                            <button ng-if="vm.primerSequenceInfoExpanded2[$index]" ng-click="vm.primerSequenceInfoExpanded2[$index] = false" class="glyphicon glyphicon-minus-sign"></button>
+                                        </td>
+                                        <td>{{ node2.primer.data.Tm }}</td>
+                                        <td colspan="3">{{ node2.order.data.PrimerName }}</td>
+                                        <td colspan="3">{{ node2.primer.data.PrimerSequence }}</td>
+                                        <td colspan="3">{{ node2.primer.data.Comments }}</td>
+                                    </tr>
+                                    <tr ng-show="vm.primerSequenceInfoExpanded2[$index]">
+                                        <td class="col-md-1"></td>
+                                        <td class="col-md-11" colspan="11">
+                                            <table class="table">
+                                                <thead>
+                                                <tr>
+                                                    <th class="col-md-1">Designer</th>
+                                                    <th class="col-md-1">Requester</th>
+                                                    <th class="col-md-1">Supplier</th>
+                                                    <th class="col-md-1">Receiver</th>
+                                                    <th class="col-md-1">Lot Number</th>
+                                                    <th class="col-md-1">Location </th>
+                                                    <th class="col-md-1">Tag</th>
+                                                    <th class="col-md-1">Scale</th>
+                                                    <th class="col-md-1">Purification</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr>
+                                                    <td>{{ node2.enterUser.data.UserName }} <mydate>{{ node2.enteredBy.data.Date | date:'dd-MM-yy' }}</mydate></td>
+                                                    <td>{{ node2.requesterUser.data.UserName }} <mydate>{{ node2.requestedBy.data.Date | date:'dd-MM-yy' }}</mydate></td>
+                                                    <td>{{ node2.order.data.Supplier }}</td>
+                                                    <td ng-show="node2.receiveUser.data.UserName != null">{{ node2.receiveUser.data.UserName }} <mydate>{{ node2.receivedBy.data.Date | date:'dd-MM-yy' }}</mydate></td><td ng-show="node2.receiveUser.data.UserName == null"><button ng-click="vm.receivedOrderNodeId = node2.order.id; vm.addReceivedBy();">Received</button></td>
+                                                    <td ng-show="node2.order.data.LotNumber != null">{{ node2.order.data.LotNumber }}</td><td ng-show="node2.order.data.LotNumber == null"><input type="text" class="form-control" placeholder="Enter Lot Number" data-ng-model="vm.lotNumber"></td>
+                                                    <td ng-show="node2.storageLocation.data.Location != null">{{ node2.storageLocation.data.Location }}</td><td ng-show="node2.storageLocation.data.Location == null"><input type="text" class="form-control" placeholder="Enter Location" data-ng-model="vm.storageLocation"></td>
+                                                    <td ng-show="node2.m13f.data != null">M13F</td><td ng-show="node2.m13r.data != null">M13R</td><td ng-show="node2.m13r.data == null && node2.m13f.data == null"></td>
+                                                    <td>{{ node2.order.data.Scale }}</td>
+                                                    <td>{{ node2.order.data.Purification }}</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr ng-show="vm.primerSequenceOrderExpanded2[$index]">
+                                        <td class="col-md-1"></td>
+                                        <td class="col-md-11" colspan="11">
+                                            <table class="table">
+                                                <tbody>
+                                                <tr ng-show="vm.primerSequenceOrderExpanded2[$index]">
+                                                    <td class="col-md-1"><button class="glyphicon glyphicon-shopping-cart" data-ng-click="vm.primerSequenceToBuyID = node2.primer.id;vm.requestPrimer(); vm.newPrimerFivePrimerMod = ''; vm.newPrimerName = ''; vm.newPrimerThreePrimerMod = ''; vm.selectedScale = vm.primerUMScales[0]; vm.selectedPurification = vm.primerPurifications[0]; vm.selectedSupplier = vm.primerSuppliers[0]"></button></td>
+                                                    <td class="col-md-1"><select ng-init="vm.selectedM13 = vm.primerM13Tag[0]" data-ng-model="vm.selectedM13" data-ng-options="M13 for M13 in vm.primerM13Tag"></select></td>
+                                                    <td class="col-md-1"><input type="text" class="form-control" placeholder="5' Mod" data-ng-model="vm.newPrimerFivePrimerMod"></td>
+                                                    <td class="col-md-2" colspan="2"><input type="text" class="form-control" placeholder="Primer Name" data-ng-model="vm.newPrimerName"></td>
+                                                    <td class="col-md-1"><input type="text" class="form-control" placeholder="3' Mod" data-ng-model="vm.newPrimerThreePrimerMod"></td>
+                                                    <td class="col-md-1"><select ng-init="vm.selectedScale = vm.primerUMScales[0]" data-ng-model="vm.selectedScale" data-ng-options="scale for scale in vm.primerUMScales"></select></td>
+                                                    <td class="col-md-1"><select ng-init="vm.selectedPurification = vm.primerPurifications[0]" data-ng-model="vm.selectedPurification" data-ng-options="purification for purification in vm.primerPurifications"></select></td>
+                                                    <td class="col-md-1"><select ng-init="vm.selectedSupplier = vm.primerSuppliers[0]" data-ng-model="vm.selectedSupplier" data-ng-options="supplier for supplier in vm.primerSuppliers"></select></td>
+                                                    <td class="col-md-1"></td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -314,6 +302,7 @@
 
                     </div>
                 </div>
+
 
                 <div class="widget-foot">
                     <div class="clearfix"></div>
