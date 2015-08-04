@@ -46,11 +46,10 @@
 
         activate();
 
-        //todo fix M13 bug
+        //todo fix M13 bug ?fixed
         //todo retired
         //todo archived
         //todo snp check record?
-        //todo primer name query
         //todo email to supplier
 
         function activate() {

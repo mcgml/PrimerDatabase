@@ -28,17 +28,17 @@
                                 <table class="table table-striped" ng-repeat="node in vm.regionofInterestNodes" ng-if="$index > 0">
                                     <thead>
                                         <tr>
-                                            <th>Info</th>
-                                            <th>View</th>
-                                            <th>Contig</th>
-                                            <th>Start</th>
-                                            <th>End</th>
-                                            <th>Upstream Sequence</th>
-                                            <th>Tm</th>
-                                            <th>Downstream Sequence</th>
-                                            <th>Tm</th>
-                                            <th>Size</th>
-                                            <th>Genome</th>
+                                            <th class="col-md-1">Info</th>
+                                            <th class="col-md-1">View</th>
+                                            <th class="col-md-1">Contig</th>
+                                            <th class="col-md-1">Start</th>
+                                            <th class="col-md-1">End</th>
+                                            <th class="col-md-1">Upstream Sequence</th>
+                                            <th class="col-md-1">Tm</th>
+                                            <th class="col-md-1">Downstream Sequence</th>
+                                            <th class="col-md-1">Tm</th>
+                                            <th class="col-md-1">Size</th>
+                                            <th class="col-md-1">Genome</th>
                                         </tr>
                                     </thead>
                                     <tbody ng-repeat="node2 in node">
@@ -59,25 +59,29 @@
                                             <td>{{ node2.primer2.data.Tm }}</td>
                                             <td>{{ (node2.assay.data.EndPos - node2.assay.data.StartPos) + node2.primer1.data.PrimerSequence.length + node2.primer2.data.PrimerSequence.length }}</td>
                                             <td>{{ node2.assay.data.ReferenceGenome }}</td>
-                                            <tr ng-show="vm.assayInfoExpanded[$index]">
-                                                <th></th>
-                                                <th>Designer</th>
-                                                <th>Checked</th>
-                                                <th>Upstream Primer Comments</th>
-                                                <th>Downstream Primer Comments</th>
-                                                <th>Upstream Primer SNP check</th>
-                                                <th>Downstream Primer SNP check</th>
-                                            </tr>
-                                            <tr ng-show="vm.assayInfoExpanded[$index]">
-                                                <td></td>
-                                                <td>{{node2.designerUser.data.UserName}}</td>
-                                                <td ng-show="node2.user.data.UserName != null">{{ node2.user.data.UserName }} <mydate>{{ node2.checker.data.Date | date:'dd-MM-yy' }}</mydate></td>
-                                                <td ng-show="node2.user.data.UserName == null"><button ng-click="vm.checkedAssayNodeId = node2.assay.id; vm.checkedAssayDesignedBy = node2.designerUser.data.UserName; vm.addCheckedBy()"><i class="glyphicon glyphicon-thumbs-up"></i></button></td>
-                                                <td ng-show="node2.primer1.data.Comments != null">{{node2.primer1.data.Comments}}</td>
-                                                <td ng-show="node2.primer2.data.Comments != null">{{node2.primer2.data.Comments}}</td>
-                                                <td ng-show="node2.primer1.data.SNPDB != null">{{node2.primer1.data.SNPDB}}</td>
-                                                <td ng-show="node2.primer2.data.SNPDB != null">{{node2.primer2.data.SNPDB}}</td>
-                                            </tr>
+                                        </tr>
+                                        <tr ng-show="vm.assayInfoExpanded[$index]">
+                                            <td class="col-md-12" colspan="12">
+                                                <table class="table">
+                                                    <thead>
+                                                    <tr>
+                                                        <th class="col-md-1">Designer</th>
+                                                        <th class="col-md-1">Checked</th>
+                                                        <th class="col-md-1">Upstream Primer Comments</th>
+                                                        <th class="col-md-1">Downstream Primer Comments</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                        <td>{{node2.designerUser.data.UserName}}</td>
+                                                        <td ng-show="node2.user.data.UserName != null">{{ node2.user.data.UserName }} <mydate>{{ node2.checker.data.Date | date:'dd-MM-yy' }}</mydate></td>
+                                                        <td ng-show="node2.user.data.UserName == null"><button ng-click="vm.checkedAssayNodeId = node2.assay.id; vm.checkedAssayDesignedBy = node2.designerUser.data.UserName; vm.addCheckedBy()"><i class="glyphicon glyphicon-thumbs-up"></i></button></td>
+                                                        <td ng-show="node2.primer1.data.Comments != null">{{node2.primer1.data.Comments}}</td>
+                                                        <td ng-show="node2.primer2.data.Comments != null">{{node2.primer2.data.Comments}}</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -93,7 +97,7 @@
                     <div class="widget-content">
 
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-4">
                                 <form class="form-horizontal" role="form">
                                     <div class="form-group">
                                         <input type="text" class="form-control" placeholder="Enter Primer Sequence" data-ng-model="vm.primerSequence">
@@ -135,8 +139,7 @@
                                         <td colspan="3">{{ node2.primer.data.Comments }}</td>
                                     </tr>
                                     <tr ng-show="vm.primerSequenceInfoExpanded1[$index]">
-                                        <td class="col-md-1"></td>
-                                        <td class="col-md-11" colspan="11">
+                                        <td class="col-md-12" colspan="12">
                                             <table class="table">
                                                 <thead>
                                                 <tr>
@@ -149,6 +152,8 @@
                                                     <th class="col-md-1">Tag</th>
                                                     <th class="col-md-1">Scale</th>
                                                     <th class="col-md-1">Purification</th>
+                                                    <th class="col-md-1">5' Mod</th>
+                                                    <th class="col-md-1">3' Mod</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -162,14 +167,15 @@
                                                     <td ng-show="node2.m13f.data != null">M13F</td><td ng-show="node2.m13r.data != null">M13R</td><td ng-show="node2.m13r.data == null && node2.m13f.data == null"></td>
                                                     <td>{{ node2.order.data.Scale }}</td>
                                                     <td>{{ node2.order.data.Purification }}</td>
+                                                    <td>{{ node2.order.data.FivePrimeModification }}</td>
+                                                    <td>{{ node2.order.data.ThreePrimeModification }}</td>
                                                 </tr>
                                                 </tbody>
                                             </table>
                                         </td>
                                     </tr>
                                     <tr ng-show="vm.primerSequenceOrderExpanded1[$index]">
-                                        <td class="col-md-1"></td>
-                                        <td class="col-md-11" colspan="11">
+                                        <td class="col-md-12" colspan="12">
                                             <table class="table">
                                                 <tbody>
                                                 <tr ng-show="vm.primerSequenceOrderExpanded1[$index]">
@@ -201,7 +207,7 @@
                     <div class="widget-content">
 
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-4">
                                 <form class="form-horizontal" role="form">
                                     <div class="form-group">
                                         <input type="text" class="form-control" placeholder="Enter Primer Name" data-ng-model="vm.primerName">
@@ -243,8 +249,7 @@
                                         <td colspan="3">{{ node2.primer.data.Comments }}</td>
                                     </tr>
                                     <tr ng-show="vm.primerSequenceInfoExpanded2[$index]">
-                                        <td class="col-md-1"></td>
-                                        <td class="col-md-11" colspan="11">
+                                        <td class="col-md-12" colspan="12">
                                             <table class="table">
                                                 <thead>
                                                 <tr>
@@ -257,6 +262,8 @@
                                                     <th class="col-md-1">Tag</th>
                                                     <th class="col-md-1">Scale</th>
                                                     <th class="col-md-1">Purification</th>
+                                                    <th class="col-md-1">5' Mod</th>
+                                                    <th class="col-md-1">3' Mod</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -270,14 +277,15 @@
                                                     <td ng-show="node2.m13f.data != null">M13F</td><td ng-show="node2.m13r.data != null">M13R</td><td ng-show="node2.m13r.data == null && node2.m13f.data == null"></td>
                                                     <td>{{ node2.order.data.Scale }}</td>
                                                     <td>{{ node2.order.data.Purification }}</td>
+                                                    <td>{{ node2.order.data.FivePrimeModification }}</td>
+                                                    <td>{{ node2.order.data.ThreePrimeModification }}</td>
                                                 </tr>
                                                 </tbody>
                                             </table>
                                         </td>
                                     </tr>
                                     <tr ng-show="vm.primerSequenceOrderExpanded2[$index]">
-                                        <td class="col-md-1"></td>
-                                        <td class="col-md-11" colspan="11">
+                                        <td class="col-md-12" colspan="12">
                                             <table class="table">
                                                 <tbody>
                                                 <tr ng-show="vm.primerSequenceOrderExpanded2[$index]">
