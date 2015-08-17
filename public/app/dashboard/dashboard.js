@@ -19,12 +19,8 @@
         vm.people = [];
         vm.title = 'Dashboard';
         vm.credentials = {};
-        vm.primersReadyForOrder = [];
+        vm.primersRequestedForOrder = [];
         vm.primersAwaitingReceipt = [];
-        vm.primersReadyForOrderSelected = [];
-        vm.primersReadyForOrderAllSelected = [];
-        vm.primersAwaitingReceiptSelected = [];
-        vm.primersAwaitingReceiptAllSelected = [];
 
         vm.initPrimersForOrder = initPrimersForOrder;
         vm.initPrimersForReceipt = initPrimersForReceipt;
@@ -101,7 +97,6 @@
 
                 //TODO order primers from supplier
 
-
                 vm.initPrimersForOrder();
                 vm.initPrimersForReceipt();
             });
@@ -122,7 +117,7 @@
             });
         }
 
-        ///check for primers ready to Receipt at page load
+        //check for primers ready to Receipt at page load
         function initPrimersForReceipt() {
             return datacontext.runAdhocQuery("MATCH (user:User)<-[orderedBy:ORDERED_BY]-(order:AwaitingReceipt)<-[:HAS_ORDER]-(primer:Primer) return order, primer, user, orderedBy;").then(function (result) {
 
