@@ -1,6 +1,6 @@
 {
   "name": "PrimerDatabase",
-  "version": "0.0.2",
+  "version": "1.0.2",
   "description": "Primer database and design wizard",
   "main": "app.js",
   "author": {
